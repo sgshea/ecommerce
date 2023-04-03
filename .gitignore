@@ -1,0 +1,7 @@
+/.cpcache/
+/.nrepl-port
+/ecommerce_db
+.cache
+/target
+/.clj-kondo
+/.lsp

@@ -1,0 +1,37 @@
+= Ecommerce Web Application in Clojure
+This repo is a web application creating a simple ecommerce management portal. A user can create, read, update, and delete products.
+
+== Technologies
+* https://github.com/weavejester/integrant[Integrant] to manage system state and configuration.
+* https://github.com/ring-clojure/ring[Ring] as an HTTP server abstraction
+** With ring-jetty-adapter to use the Jetty web server
+* https://github.com/metosin/reitit[Reitit], a data-driven routing library using these modules:
+** reitit-ring, reitit-middleware to manage Ring and provide common middleware
+** reitit-spec for data coercion
+** reitit-swagger, reitit-swagger-ui to provide https://swagger.io/tools/swagger-ui/[Swagger REST API documentation]
+* SQLite database
+** https://github.com/seancorfield/next-jdbc[next-jdbc] for access to databases
+
+== Building
+=== Requirements
+This repo uses Clojure 1.11, you need the https://clojure.org/guides/deps_and_cli[Clojure CLI] installed.
+
+=== Running
+You can run the application using:
+
+ $ clj -m ecommerce.system
+ 
+or the alias:
+
+ $ clj -A:server
+
+The web app can then be accessed at `+http://localhost:3000/+`
+
+==== REPL
+In the repl:
+
+ $ clj -A:dev
+ 
+The system can be run with:
+
+ $ user=> (go)
