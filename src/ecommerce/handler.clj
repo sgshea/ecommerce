@@ -10,7 +10,14 @@
             [reitit.ring.middleware.multipart :as multipart] 
             [muuntaja.core :as m]
             [ecommerce.controllers.user :as users]
-            [ring.middleware.keyword-params :refer [wrap-keyword-params]]))
+            [ring.middleware.keyword-params :refer [wrap-keyword-params]]
+            [clojure.java.io :as io]
+            [ring.util.response :as response]))
+
+(defn default-handler
+  "Serves the default.html page (links to clojurescript)"
+  [request]
+  (response/response (slurp (io/resource "default.html"))))
 
 (def middleware-db
   {:name ::db
@@ -21,11 +28,12 @@
 
 (defn app [db]
   (ring/ring-handler
-   (ring/router
-    [["/swagger.json"
+   (ring/router 
+    [["/" {:get {:handler default-handler}}]
+     ["/swagger.json"
       {:get {:no-doc true
              :swagger {:info {:title "ecommerce api"}
-                       :basePath "/"}
+                       :basePath "/api"}
              :handler (swagger/create-swagger-handler)}}]
      ["/users" {:get {:handler users/get-users}
                 :post {:parameters {:form {:first_name string?
@@ -58,7 +66,7 @@
                          wrap-keyword-params
                          middleware-db]}})
    (ring/routes
-    (swagger-ui/create-swagger-ui-handler {:path "/"})
+    (swagger-ui/create-swagger-ui-handler {:path "/api"})
     (ring/create-resource-handler
      {:path "/"})
     (ring/create-default-handler
