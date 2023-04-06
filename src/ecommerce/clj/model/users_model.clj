@@ -1,4 +1,4 @@
-(ns ecommerce.model.users-model
+(ns ecommerce.clj.model.users-model
   "Model for user and user related data"
   (:require [next.jdbc :as jdbc]
             [next.jdbc.sql :as sql]))

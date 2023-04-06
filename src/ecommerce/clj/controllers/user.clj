@@ -1,7 +1,7 @@
-(ns ecommerce.controllers.user
+(ns ecommerce.clj.controllers.user
   "API controller for user related data"
   (:require [clojure.tools.logging :as log]
-            [ecommerce.model.users-model :as model]
+            [ecommerce.clj.model.users-model :as model]
             [ring.util.response :as r]))
 
 (defn get-users

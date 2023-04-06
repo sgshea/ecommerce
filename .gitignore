@@ -5,3 +5,6 @@
 /target
 /.clj-kondo
 /.lsp
+/resources/public/assets/js
+/.shadow-cljs
+/node_modules

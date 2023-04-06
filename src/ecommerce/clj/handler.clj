@@ -1,4 +1,4 @@
-(ns ecommerce.handler
+(ns ecommerce.clj.handler
   (:require [reitit.ring :as ring]
             [reitit.swagger :as swagger]
             [reitit.swagger-ui :as swagger-ui]
@@ -9,7 +9,7 @@
             [reitit.ring.middleware.exception :as exception]
             [reitit.ring.middleware.multipart :as multipart] 
             [muuntaja.core :as m]
-            [ecommerce.controllers.user :as users]
+            [ecommerce.clj.controllers.user :as users]
             [ring.middleware.keyword-params :refer [wrap-keyword-params]]
             [clojure.java.io :as io]
             [ring.util.response :as response]))
@@ -17,7 +17,7 @@
 (defn default-handler
   "Serves the default.html page (links to clojurescript)"
   [request]
-  (response/response (slurp (io/resource "default.html"))))
+  (response/response (slurp (io/resource "index.html"))))
 
 (def middleware-db
   {:name ::db

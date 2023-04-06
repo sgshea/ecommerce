@@ -1,9 +1,9 @@
-(ns ecommerce.system
+(ns ecommerce.clj.system
   (:require [integrant.core :as ig]
             [next.jdbc :as jdbc]
             [ring.adapter.jetty :refer [run-jetty]]
-            [ecommerce.handler :as handler]
-            [ecommerce.model.users-model :refer [populate]])
+            [ecommerce.clj.handler :as handler]
+            [ecommerce.clj.model.users-model :refer [populate]])
   (:gen-class))
 
 (def config
