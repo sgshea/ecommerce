@@ -3,7 +3,8 @@
                 [nrepl "1.0.0"]
                 [reagent "1.2.0"]
                 [metosin/reitit-spec "0.6.0"]
-                [metosin/reitit-frontend "0.6.0"]]
+                [metosin/reitit-frontend "0.6.0"]
+                [cljs-ajax "0.7.5"]]
  :builds       {:app {:target     :browser
                       :output-dir "resources/public/assets/js"
                       :asset-path "/js"
