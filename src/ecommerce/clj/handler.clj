@@ -30,20 +30,21 @@
   (ring/ring-handler
    (ring/router 
     [["/" {:get {:handler default-handler}}]
-     ["/swagger.json"
-      {:get {:no-doc true
-             :swagger {:info {:title "ecommerce api"}
-                       :basePath "/api"}
-             :handler (swagger/create-swagger-handler)}}]
-     ["/users" {:get {:handler users/get-users}
-                :post {:parameters {:form {:first_name string?
-                                           :last_name string?
-                                           :email string?
-                                           :role_id int?}}
-                       :handler users/save}
-                :put {:handler users/save}}]
-     ["/users/:id" {:delete {:parameters {:path {:id int?}}
-                            :handler users/delete-by-id}}]]
+      ["/swagger.json"
+       {:get {:no-doc true
+              :swagger {:info {:title "ecommerce api"}
+                        :basePath "/"}
+              :handler (swagger/create-swagger-handler)}}]
+     ["/api"
+      ["/users" {:get {:handler users/get-users}
+                 :post {:parameters {:form {:first_name string?
+                                            :last_name string?
+                                            :email string?
+                                            :role_id int?}}
+                        :handler users/save}
+                 :put {:handler users/save}}]
+      ["/users/:id" {:delete {:parameters {:path {:id int?}}
+                              :handler users/delete-by-id}}]]]
     {:data {:db db
             :coercion reitit.coercion.spec/coercion
             :muuntaja m/instance

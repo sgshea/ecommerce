@@ -12,7 +12,7 @@
   (.log js/console (str "something bad happened: " status " " status-text)))
 
 (defn get-users [users]
-  (GET "/users"
+  (GET "/api/users"
     {:headers {"Accept" "application/transit+json"}
      :handler #(reset! users (vec %))}))
 
