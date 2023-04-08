@@ -152,7 +152,6 @@
 (defonce match (r/atom nil))
 
 (defn current-page []
-  [:box {}
    [:<>
     [styles/theme-provider (styles/create-theme (custom-theme @theme-mode))
      [css-baseline
@@ -163,7 +162,7 @@
             [view @match])
           nil)
         [:pre (with-out-str (fedn/pprint @match))]]]
-      ]]])
+      ]])
 
 (defn home []
   [:div "CLJS!"])
