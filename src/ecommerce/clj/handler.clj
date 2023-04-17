@@ -42,7 +42,12 @@
                                             :email string?
                                             :role_id int?}}
                         :handler users/save}
-                 :put {:handler users/save}}]
+                 :put {:parameters {:body {:id int?
+                                           :first_name string?
+                                           :last_name string?
+                                           :email string?
+                                           :role_id int?}}
+                       :handler users/save}}]
       ["/users/:id" {:delete {:parameters {:path {:id int?}}
                               :handler users/delete-by-id}}]]]
     {:data {:db db

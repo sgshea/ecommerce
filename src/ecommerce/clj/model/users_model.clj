@@ -71,7 +71,7 @@
   "Attempts to save a user. If it exists, 
    it is an update, else saving a new user."
   [db user]
-  (let [id (:addressbook/id user)]
+  (let [id (:users/id user)]
     (if (and id (not (zero? id)))
       (sql/update! db :users
                    (dissoc user :users/id)
