@@ -15,10 +15,10 @@
    [reagent-mui.material.container :refer [container]]
    [reagent-mui.material.app-bar :refer [app-bar]]
    [reagent-mui.material.toolbar :refer [toolbar]]
-   [reagent-mui.material.button :refer [button]]
    [reagent-mui.icons.brightness-4 :refer [brightness-4]]
    [reagent-mui.icons.brightness-7 :refer [brightness-7]]
    [reagent-mui.material.menu :refer [menu] :as menu-component]
+   [reagent-mui.material.menu-item :refer [menu-item]]
    [reagent-mui.icons.menu :refer [menu] :rename {menu menu-icon}]
    [reagent-mui.material.icon-button :refer [icon-button]]))
 
@@ -54,14 +54,12 @@
 (defonce anchorElNav (r/atom false))
 
 (defn pages-button
-  [page]
-  [button {:key (page :name)
-           :on-click #(reset! anchorElNav false)
-           :sx {:m 2
-                :color "text.secondary"
-                :display :block}
-           :href (rfe/href (page :link))}
-   (page :name)])
+  [page] 
+   [menu-item {:on-click #(reset! anchorElNav false)
+               :key (page :name)
+               :component :a
+               :href (rfe/href (page :link))}
+    (page :name)])
 
 (defn menu-bar
   "Top bar for the pages"
@@ -70,7 +68,7 @@
             :color "transparent"
             :position :sticky}
    [container {:maxWidth "x1"}
-     [toolbar
+     [toolbar {:disable-gutters true}
       [typography {:variant :h5
                    :sx {:mr 2
                         :display {:xs "none"
@@ -80,17 +78,15 @@
        "Ecommerce Web App"]
       [box {:sx {:flexGrow 1
                  :display {:md "none"}}}
-       [icon-button {:size "large"
-                     :aria-label ""
-                     :aria-controls "menu-appbar"
-                     :aria-haspopup true
+       [icon-button {:id "menu-icon"
+                     :size "large"
                      :on-click #(reset! anchorElNav true)
                      :color "inherit"}
         [menu-icon]]
-       [menu {:id "menu-appbar" 
-              :anchor-reference :none
-              :anchor-origin {:vertical "top"
-                             :horizontal "left"}
+       [menu {:id "menu-appbar"
+              :anchor-position {:top 50
+                                :left 0}
+              :anchor-reference :anchorPosition
               :keepMounted true
               :open @anchorElNav
               :onClose #(reset! anchorElNav false)}
