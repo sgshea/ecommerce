@@ -37,17 +37,17 @@
               :handler (swagger/create-swagger-handler)}}]
      ["/api"
       ["/users" {:get {:handler users/get-users}
-                 :post {:parameters {:form {:first_name string?
+                 :post {:parameters {:body {:first_name string?
                                             :last_name string?
                                             :email string?
                                             :role_id int?}}
-                        :handler users/save}
+                        :handler users/save-new}
                  :put {:parameters {:body {:id int?
                                            :first_name string?
                                            :last_name string?
                                            :email string?
                                            :role_id int?}}
-                       :handler users/save}}]
+                       :handler users/edit}}]
       ["/users/:id" {:delete {:parameters {:path {:id int?}}
                               :handler users/delete-by-id}}]]]
     {:data {:db db

@@ -11,17 +11,18 @@
     (log/info "users:" users)
     (r/response users)))
 
-(defn save
+(defn save-new
   [req]
-  (-> req
-      :params
-      (select-keys [:id :first_name :last_name :email :role_id])
-      (update :id #(some-> % not-empty Long/parseLong))
-      (update :role_id #(some-> % not-empty Long/parseLong))
-      (->> (reduce-kv (fn [m k v] (assoc! m (keyword "users" (name k)) v))
-                      (transient {}))
-           (persistent!)
-           (model/save-user (:db req))))
+  (log/info "adding user: " (:body (:parameters req)))
+  (model/save-user (:db req)
+                   (get-in req [:parameters :body]))
+  (r/status 200))
+
+(defn edit
+  [req]
+  (log/info "editing user: " (:body (:parameters req)))
+  (model/save-user (:db req)
+                   (get-in req [:parameters :body]))
   (r/status 200))
 
 (defn delete-by-id [req]

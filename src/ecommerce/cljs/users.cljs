@@ -1,7 +1,8 @@
 (ns ecommerce.cljs.users
   (:require 
    [reagent.core :as r]
-   [ajax.core :refer [GET POST]]
+   [ajax.core :refer [GET POST PUT]]
+   [reagent-mui.material.button :refer [button]]
    [reagent-mui.x.data-grid :refer [data-grid]]
    [reagent-mui.util :refer [clj->js']]))
 
@@ -15,6 +16,18 @@
   (GET "/api/users"
     {:headers {"Accept" "application/transit+json"}
      :handler #(reset! users (vec %))}))
+
+(defn post-user [user]
+  (POST "/api/users"
+    {:headers {"Accept" "application/transit+json"}
+     :params user
+     :handler handler}))
+
+(defn put-user [user]
+  (PUT "/api/users"
+    {:headers {"Accept" "application/transit+json"}
+     :params user
+     :handler handler}))
 
 (def columns [{:field :id
                :headerName "ID"
@@ -31,8 +44,6 @@
               {:field :role
                :headerName "Role"
                :width 150}])
-
-(defonce selected (r/atom nil))
 
 (defn data-grid-component [rows col]
   [:div {:style {:height 400 :width 800}}
@@ -53,6 +64,18 @@
                   :email (:users/email %)
                   :role (:role/name %))
        users))
+
+(defn format-user-data-back [user]
+  "Formats a single user back into the format for a POST or PUT request"
+  (hash-map
+   :first_name (:first-name user)
+   :last_name (:last-name user)
+   :email (:email user)
+   :role_id (case user
+              "Management" 0
+              "Logistics" 1
+              "Support" 2
+              "Development" 3)))
 
 (defn users-page []
   "Main function defining users page"
