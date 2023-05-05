@@ -30,8 +30,9 @@
      :params user
      :handler handler}))
 
-(defn format-users-data [users]
+(defn format-users-data 
   "Formats the user data from a GET request to rows for the data-table"
+  [users]
   (map #(hash-map :id (:users/id %)
                   :first-name (:users/first_name %)
                   :last-name (:users/last_name %)
@@ -39,8 +40,9 @@
                   :role (:role/name %))
        users))
 
-(defn format-user-data-back [user]
+(defn format-user-data-back 
   "Formats a single user back into the format for a POST or PUT request"
+  [user]
   (hash-map
    :id (:id user)
    :first_name (:first-name user)
@@ -52,7 +54,9 @@
               "Support" 3
               "Development" 4)))
 
-(defn row-update [new]
+(defn row-update 
+  "Updates a row, used for the datagrid"
+  [new]
   (put-user (format-user-data-back (js->clj new :keywordize-keys true)))
   new)
 
@@ -90,8 +94,9 @@
                :on-process-row-update-error row-update-error
                }]])
 
-(defn users-page []
+(defn users-page 
   "Main function defining users page"
+  []
   (let [users (r/atom nil)]
     (get-users users)
     (fn []
