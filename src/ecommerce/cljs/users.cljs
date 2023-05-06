@@ -5,7 +5,25 @@
    [reagent-mui.material.button :refer [button]]
    [reagent-mui.x.data-grid :refer [data-grid]]
    [reagent-mui.util :refer [clj->js']]
+   [reagent-mui.icons.add :refer [add] :rename {add add-icon}]
+   [reagent-mui.material.box :refer [box]]
+   [reagent-mui.material.text-field :refer [text-field]]
+   [reagent-mui.material.dialog :refer [dialog]]
+   [reagent-mui.material.dialog-actions :refer [dialog-actions]]
+   [reagent-mui.material.dialog-content :refer [dialog-content]]
+   [reagent-mui.material.dialog-content-text :refer [dialog-content-text]]
+   [reagent-mui.material.dialog-title :refer [dialog-title]]
+   [reagent-mui.material.input-label :refer [input-label]]
+   [reagent-mui.material.menu-item :refer [menu-item]]
+   [reagent-mui.material.form-control :refer [form-control]]
+   [reagent-mui.material.select :refer [select]]
    ))
+
+(defonce users (r/atom nil))
+
+(defn event-value
+  [e]
+  (.. e -target -value))
 
 (defn handler [response]
   (.log js/console (str response)))
@@ -54,14 +72,94 @@
               "Support" 3
               "Development" 4)))
 
-(defn row-update 
+(defn row-update
   "Updates a row, used for the datagrid"
   [new]
   (put-user (format-user-data-back (js->clj new :keywordize-keys true)))
+  (get-users users)
   new)
 
 (defn row-update-error [error]
   (.log js/console (str error)))
+
+(defn role-select
+  "Select component for roles"
+  [selected-role]
+    [box {:component :form
+          :sx {:mt 5}}
+     [form-control
+      [input-label {:id "select-roles"}
+       "Role"]
+      [select {:native false
+               :value @selected-role
+               :on-change (fn [e] (reset! selected-role (event-value e)))
+               :label "Role"
+               :id "select-roles"
+               :label-id "select-roles"}
+       [menu-item {:value 1}
+        "Management"]
+       [menu-item {:value 2}
+        "Logistics"]
+       [menu-item {:value 3}
+        "Support"]
+       [menu-item {:value 4}
+        "Development"]]]])
+
+(defn user-dialog
+  "Form dialog to add a new user"
+  [dialog-open]
+  (let [user (r/atom {:first_name ""
+                      :last_name ""
+                      :email ""})
+        selected-role (r/atom 1)]
+    [:div
+     [button {:variant :outlined
+              :on-click #(reset! dialog-open true)
+              :start-icon (r/as-element [add-icon])}
+      "Add New User"]
+     [dialog {:open @dialog-open
+              :on-close #(reset! dialog-open false)}
+      [dialog-title "Add New User"]
+      [dialog-content
+       [dialog-content-text
+        "To add a new user, please enter a name, email, and role"]
+       [text-field {:auto-focus true
+                    :margin :dense
+                    :id :first-name-field
+                    :label "First Name"
+                    :on-change (fn [e]
+                                 (swap! user assoc-in [:first_name] (event-value e)))
+                    :type :text
+                    :full-width true
+                    :variant :standard}]
+       [text-field {:auto-focus false
+                    :margin :dense
+                    :id :last-name-field
+                    :label "Last Name"
+                    :on-change (fn [e]
+                                 (swap! user assoc-in [:last_name] (event-value e)))
+                    :type :text
+                    :full-width true
+                    :variant :standard}]
+       [text-field {:auto-focus false
+                    :margin :dense
+                    :id :email-field
+                    :label "Email"
+                    :on-change (fn [e]
+                                 (swap! user assoc-in [:email] (event-value e)))
+                    :type :email
+                    :full-width true
+                    :variant :standard}]
+       [role-select selected-role]
+       [dialog-actions
+        [button {:on-click #(reset! dialog-open false)} "Close"]
+        [button {:on-click #(do
+                              (post-user (merge @user {:role_id @selected-role}))
+                              (reset! user {:first_name ""
+                                            :last_name ""
+                                            :email ""})
+                              (reset! dialog-open false)
+                              (get-users users))} "Submit"]]]]]))
 
 (def columns [{:field :id
                :headerName "ID"
@@ -97,9 +195,10 @@
 (defn users-page 
   "Main function defining users page"
   []
-  (let [users (r/atom nil)]
+  (let [dialog-open (r/atom false)]
     (get-users users)
     (fn []
       [:div
        [:h3 "Users List"]
-       (data-grid-component (format-users-data @users) columns)])))
+       (data-grid-component (format-users-data @users) columns)
+       [user-dialog dialog-open]])))
