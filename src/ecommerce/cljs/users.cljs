@@ -1,11 +1,13 @@
 (ns ecommerce.cljs.users
   (:require 
    [reagent.core :as r]
-   [ajax.core :refer [GET POST PUT]]
+   [ajax.core :refer [GET POST PUT DELETE]]
    [reagent-mui.material.button :refer [button]]
    [reagent-mui.x.data-grid :refer [data-grid]]
    [reagent-mui.util :refer [clj->js']]
    [reagent-mui.icons.add :refer [add] :rename {add add-icon}]
+   [reagent-mui.icons.delete :refer [delete] :rename {delete delete-icon}]
+   [reagent-mui.icons.delete-forever :refer [delete-forever] :rename {delete-forever delete-forever-icon}]
    [reagent-mui.material.box :refer [box]]
    [reagent-mui.material.text-field :refer [text-field]]
    [reagent-mui.material.dialog :refer [dialog]]
@@ -16,10 +18,12 @@
    [reagent-mui.material.input-label :refer [input-label]]
    [reagent-mui.material.menu-item :refer [menu-item]]
    [reagent-mui.material.form-control :refer [form-control]]
-   [reagent-mui.material.select :refer [select]]
-   ))
+   [reagent-mui.material.select :refer [select]]))
+   
 
 (defonce users (r/atom nil))
+
+(defonce selected-ids (r/atom []))
 
 (defn event-value
   [e]
@@ -48,6 +52,13 @@
      :params user
      :handler handler}))
 
+(defn delete-user [user]
+  (DELETE (str "/api/users/" user)
+    {:headers {"Accept" "application/transit+json"}
+     :params {}
+     :handler handler
+     :error-handler error-handler}))
+
 (defn format-users-data 
   "Formats the user data from a GET request to rows for the data-table"
   [users]
@@ -71,6 +82,35 @@
               "Logistics" 2
               "Support" 3
               "Development" 4)))
+
+(defn rows-selection-handler
+  "Updates the selected-ids atom with the ids of selected rows"
+  [selection-model]
+  (reset! selected-ids selection-model)
+  (.log js/console (str "Selected ids: " @selected-ids)))
+
+(defn row-deletion-button
+  "Button to delete selected items, opens a confirmation dialog"
+  [dialog-open?]
+  [:div
+   [button {:variant :outlined
+            :on-click #(reset! dialog-open? true)
+            :start-icon (r/as-element [delete-icon])}
+    "Delete Selected Users"]
+   [dialog {:open @dialog-open?
+            :on-close #(reset! dialog-open? false)}
+    [dialog-title "Are you sure you want to delete these users?"]
+    [dialog-content
+     [dialog-content-text
+      (str "Ids of users which will be deleted: " @selected-ids)]
+     [dialog-actions
+      [button {:on-click #(reset! dialog-open? false)} "Go back"]
+      [button {:start-icon (r/as-element [delete-forever-icon])
+               :on-click #(do
+                            (reset! dialog-open? false)
+                            (doseq [user @selected-ids]
+                              (delete-user user))
+                            (get-users users))} "Delete Users"]]]]])
 
 (defn row-update
   "Updates a row, used for the datagrid"
@@ -107,18 +147,18 @@
 
 (defn user-dialog
   "Form dialog to add a new user"
-  [dialog-open]
+  [dialog-open?]
   (let [user (r/atom {:first_name ""
                       :last_name ""
                       :email ""})
         selected-role (r/atom 1)]
     [:div
      [button {:variant :outlined
-              :on-click #(reset! dialog-open true)
+              :on-click #(reset! dialog-open? true)
               :start-icon (r/as-element [add-icon])}
       "Add New User"]
-     [dialog {:open @dialog-open
-              :on-close #(reset! dialog-open false)}
+     [dialog {:open @dialog-open?
+              :on-close #(reset! dialog-open? false)}
       [dialog-title "Add New User"]
       [dialog-content
        [dialog-content-text
@@ -152,13 +192,13 @@
                     :variant :standard}]
        [role-select selected-role]
        [dialog-actions
-        [button {:on-click #(reset! dialog-open false)} "Close"]
+        [button {:on-click #(reset! dialog-open? false)} "Close"]
         [button {:on-click #(do
                               (post-user (merge @user {:role_id @selected-role}))
                               (reset! user {:first_name ""
                                             :last_name ""
                                             :email ""})
-                              (reset! dialog-open false)
+                              (reset! dialog-open? false)
                               (get-users users))} "Submit"]]]]]))
 
 (def columns [{:field :id
@@ -190,15 +230,18 @@
                :density :standard
                :process-row-update row-update
                :on-process-row-update-error row-update-error
+               :on-row-selection-model-change rows-selection-handler
                }]])
 
 (defn users-page 
   "Main function defining users page"
   []
-  (let [dialog-open (r/atom false)]
+  (let [add-user-dialog (r/atom false)
+        remove-user-dialog (r/atom false)]
     (get-users users)
     (fn []
       [:div
        [:h3 "Users List"]
-       (data-grid-component (format-users-data @users) columns)
-       [user-dialog dialog-open]])))
+       [data-grid-component (format-users-data @users) columns]
+       [user-dialog add-user-dialog]
+       [row-deletion-button remove-user-dialog]])))
