@@ -57,9 +57,9 @@
                                                :category string?
                                                :price float?
                                                :quantity int?}}
-                           :handler products/save-new}}
-       ["/:id" {:delete {:parameters {:path {:id int?}}
-                         :handler products/delete-by-id}}]]]]
+                           :handler products/save-new}}]
+      ["/products/:id" {:delete {:parameters {:path {:id int?}}
+                                 :handler products/delete-by-id}}]]]
     {:data {:db db
             :coercion reitit.coercion.spec/coercion
             :muuntaja m/instance

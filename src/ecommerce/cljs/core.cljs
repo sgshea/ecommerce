@@ -7,6 +7,7 @@
    [reitit.coercion.spec :as rss]
    [fipp.edn :as fedn]
    [ecommerce.cljs.users :as users]
+   [ecommerce.cljs.products :as products]
    [reagent-mui.colors :as colors]
    [reagent-mui.styles :as styles]
    [reagent-mui.material.css-baseline :refer [css-baseline]]
@@ -49,7 +50,9 @@
   [{:name "Home"
     :link ::home}
    {:name "Users"
-    :link ::users}])
+    :link ::users}
+   {:name "Products"
+    :link ::products}])
 
 (defonce anchorElNav (r/atom false))
 
@@ -139,7 +142,10 @@
 
    ["/users"
     {:name ::users
-     :view users/users-page}]])
+     :view users/users-page}]
+   ["/products"
+    {:name ::products
+     :view products/products-page}]])
 
 ;; -------------------------
 ;; Initialize app

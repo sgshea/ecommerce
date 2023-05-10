@@ -25,7 +25,7 @@
       (jdbc/execute-one! db
                          (hsql/format {:create-table :products
                                        :with-columns
-                                       [[:id :int [:not nil] :primary-key]
+                                       [[:id :integer :primary-key]
                                         [:name [:varchar 32] [:not nil]]
                                         [:description [:varchar 255]]
                                         [:category [:varchar 32] [:not nil]]
@@ -49,8 +49,8 @@
   "Return all of the products"
   [db]
   (sql/query db
-             (-> (select :*)
-                 (from :products))))
+             (hsql/format {:select [:*]
+                           :from [:products]})))
 
 (defn save-product
   "Attempts to save a product If it exists, 
