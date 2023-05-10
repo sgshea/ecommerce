@@ -14,7 +14,7 @@
    {:first_name "John" :last_name "Smith"
     :email "john@smith.com" :role_id 1}])
 
-(defn populate
+(defn populate-users
   "Creates tables and auto-populates them with initial data"
   [db]
     (try

@@ -5,10 +5,9 @@
             [ring.util.response :as r]))
 
 (defn get-users
-  "Render the list view with all the users in the addressbook."
+  "Render the list view with all the users"
   [req]
   (let [users (model/get-users (:db req))]
-    (log/info "users:" users)
     (r/response users)))
 
 (defn save-new

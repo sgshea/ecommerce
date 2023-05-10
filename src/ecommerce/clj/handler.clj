@@ -10,6 +10,7 @@
             [reitit.ring.middleware.multipart :as multipart] 
             [muuntaja.core :as m]
             [ecommerce.clj.controllers.user :as users]
+            [ecommerce.clj.controllers.products :as products]
             [ring.middleware.keyword-params :refer [wrap-keyword-params]]
             [clojure.java.io :as io]
             [ring.util.response :as response]))
@@ -49,7 +50,16 @@
                                            :role_id int?}}
                        :handler users/edit}}]
       ["/users/:id" {:delete {:parameters {:path {:id int?}}
-                              :handler users/delete-by-id}}]]]
+                              :handler users/delete-by-id}}]
+      ["/products" {:get {:handler products/get-products}
+                    :post {:parameters {:body {:name string?
+                                               :description string?
+                                               :category string?
+                                               :price float?
+                                               :quantity int?}}
+                           :handler products/save-new}}
+       ["/:id" {:delete {:parameters {:path {:id int?}}
+                         :handler products/delete-by-id}}]]]]
     {:data {:db db
             :coercion reitit.coercion.spec/coercion
             :muuntaja m/instance
