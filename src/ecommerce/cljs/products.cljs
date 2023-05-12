@@ -41,11 +41,11 @@
      :params product
      :handler handler}))
 
-;; (defn put-user [user]
-;;   (PUT "/api/users"
-;;     {:headers {"Accept" "application/transit+json"}
-;;      :params user
-;;      :handler handler}))
+(defn put-product [product]
+  (PUT "/api/products"
+    {:headers {"Accept" "application/transit+json"}
+     :params product
+     :handler handler}))
 
 (defn delete-product [product]
   (DELETE (str "/api/products/" product)
@@ -97,7 +97,10 @@
 (defn row-update
   "Updates a row, used for the datagrid"
   [new]
-  ;; (put-user (format-user-data-back (js->clj new :keywordize-keys true)))
+  (->
+   (js->clj new :keywordize-keys true)
+   (update :price js/parseFloat)
+   (put-product))
   (get-products products)
   new)
 
@@ -133,6 +136,7 @@
                     :full-width true
                     :variant :standard}]
        [text-field {:auto-focus false
+                    :multiline true
                     :margin :dense
                     :id :description-field
                     :label "Product Description"
@@ -155,7 +159,7 @@
                     :id :price-field
                     :label "Price"
                     :on-change (fn [e]
-                                 (swap! product assoc-in [:price] (event-value e)))
+                                 (swap! product assoc-in [:price] (js/parseFloat (event-value e))))
                     :type :number
                     :full-width false
                     :variant :standard}]
@@ -164,7 +168,7 @@
                     :id :price-field
                     :label "Initial Quantity"
                     :on-change (fn [e]
-                                 (swap! product assoc-in [:quantity] (event-value e)))
+                                 (swap! product assoc-in [:quantity] (js/parseInt (event-value e))))
                     :type :number
                     :full-width false
                     :variant :standard}]
@@ -188,23 +192,25 @@
                :width 100}
               {:field :description
                :headerName "Description"
-               :width 300}
+               :width 300
+               :editable true}
               {:field :category
                :headerName "Category"
                :width 130}
               {:field :price
                :headerName "Price"
                :width 80
-               :editable false}
+               :editable true}
               {:field :quantity
                :headerName "Quantity"
                :width 150
-               :editable false}])
+               :editable true}])
 
 (defn data-grid-component [rows col]
-  [:div {:style {:height 400 :width 800}}
+  [:div {:style {:height 400 :width "100%"}}
    [data-grid {:rows rows
                :columns col
+               :auto-height true
                :initial-state (clj->js' {:pagination {:pagination-model {:page-size 5}}})
                :page-size-options [5]
                :checkbox-selection true

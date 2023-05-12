@@ -52,17 +52,18 @@
              (hsql/format {:select [:*]
                            :from [:products]})))
 
-(defn save-product
-  "Attempts to save a product If it exists, 
-   it is an update, else saving a new product"
+(defn add-product
+  "Adds a single product"
+  [db product]
+  (sql/insert! db :products product))
+
+(defn update-product
+  "Updates a single product"
   [db product]
   (let [id (:id product)]
-    (if (and id (not (zero? id)))
-      (sql/update! db :products
-                   (dissoc product :users/id)
-                   {:id id})
-      (sql/insert! db :users
-                   (dissoc product :users/id)))))
+    (sql/update! db :products
+                (dissoc product :products/id)
+                {:id id})))
 
 (defn delete-product-by-id
   "Deletes a product given an id"

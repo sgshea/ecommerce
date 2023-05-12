@@ -55,9 +55,16 @@
                     :post {:parameters {:body {:name string?
                                                :description string?
                                                :category string?
-                                               :price float?
+                                               :price number?
                                                :quantity int?}}
-                           :handler products/save-new}}]
+                           :handler products/save-new}
+                    :put {:parameters {:body {:id int?
+                                              :name string?
+                                              :description string?
+                                              :category string?
+                                              :price number?
+                                              :quantity int?}}
+                          :handler products/edit}}]
       ["/products/:id" {:delete {:parameters {:path {:id int?}}
                                  :handler products/delete-by-id}}]]]
     {:data {:db db
