@@ -78,10 +78,9 @@
    :last_name (:last-name user)
    :email (:email user)
    :role_id (case (:role user)
-              "Management" 1
-              "Logistics" 2
-              "Support" 3
-              "Development" 4)))
+              "Customer" 1
+              "Manager" 2
+              "Staff" 3)))
 
 (defn rows-selection-handler
   "Updates the selected-ids atom with the ids of selected rows"
@@ -137,13 +136,11 @@
                :id "select-roles"
                :label-id "select-roles"}
        [menu-item {:value 1}
-        "Management"]
+        "Customer"]
        [menu-item {:value 2}
-        "Logistics"]
+        "Manager"]
        [menu-item {:value 3}
-        "Support"]
-       [menu-item {:value 4}
-        "Development"]]]])
+        "Staff"]]]])
 
 (defn user-dialog
   "Form dialog to add a new user"
