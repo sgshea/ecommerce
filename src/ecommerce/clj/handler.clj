@@ -13,7 +13,9 @@
             [ecommerce.clj.controllers.products :as products]
             [ring.middleware.keyword-params :refer [wrap-keyword-params]]
             [clojure.java.io :as io]
-            [ring.util.response :as response]))
+            [ring.util.response :as response]
+            [ecommerce.clj.auth-utils :refer [wrap-jwt-authentication auth-middleware]]
+            ))
 
 (defn default-handler
   "Serves the default.html page (links to clojurescript)"
@@ -35,20 +37,20 @@
        {:get {:no-doc true
               :swagger {:info {:title "ecommerce api"}
                         :basePath "/"}
-              :handler (swagger/create-swagger-handler)}}]
+              :handler (swagger/create-swagger-handler)}}] 
      ["/api"
-      ["/users" {:get {:handler users/get-users}
-                 :post {:parameters {:body {:first_name string?
-                                            :last_name string?
-                                            :email string?
-                                            :role_id int?}}
-                        :handler users/save-new}
-                 :put {:parameters {:body {:id int?
-                                           :first_name string?
-                                           :last_name string?
-                                           :email string?
-                                           :role_id int?}}
-                       :handler users/edit}}]
+      ["/register" {:post {:parameters {:body {:username string?
+                                               :password string?
+                                               :email string?
+                                               :role_id int?}}
+                        :handler users/register}}]
+      ["/login" {:post {:parameters {:body {:username string?
+                                            :password string?}}
+                        :handler users/login}}]
+      ["/me" {:get {:middleware [wrap-jwt-authentication auth-middleware]
+                    :handler users/me}}]
+      ["/users" {:get {:middleware [wrap-jwt-authentication auth-middleware]
+                       :handler users/get-users}}]
       ["/users/:id" {:delete {:parameters {:path {:id int?}}
                               :handler users/delete-by-id}}]
       ["/products" {:get {:handler products/get-products}
@@ -86,6 +88,7 @@
                          coercion/coerce-request-middleware
                            ;; multipart
                          multipart/multipart-middleware
+                         ;; auth
                          wrap-keyword-params
                          middleware-db]}})
    (ring/routes

@@ -13,6 +13,10 @@
   org.xerial/sqlite-jdbc {:mvn/version "3.41.2.1"}
   com.github.seancorfield/honeysql {:mvn/version "2.4.1026"}
   
+  buddy/buddy-auth {:mvn/version "3.0.323"}
+  buddy/buddy-hashers {:mvn/version "1.8.158"}
+  buddy/buddy-sign {:mvn/version "3.4.333"}
+  
   org.clojure/clojurescript {:mvn/version "1.11.54"}}
 
 

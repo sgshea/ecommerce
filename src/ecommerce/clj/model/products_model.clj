@@ -2,8 +2,7 @@
   "Model for products data"
   (:require [next.jdbc :as jdbc]
             [next.jdbc.sql :as sql]
-            [honey.sql :as hsql]
-            [honey.sql.helpers :as h :refer [select from where order-by over]]))
+            [honey.sql :as hsql]))
 
 (def ^:private initial-product-data
   [{:name "Apples" :description "Red Fruit" :category "Fruit" :price 4.5 :quantity 100}

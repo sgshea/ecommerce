@@ -63,8 +63,8 @@
   "Formats the user data from a GET request to rows for the data-table"
   [users]
   (map #(hash-map :id (:users/id %)
-                  :first-name (:users/first_name %)
-                  :last-name (:users/last_name %)
+                  :username (:users/username %)
+                  :password (:users/password %)
                   :email (:users/email %)
                   :role (:role/name %))
        users))
@@ -74,8 +74,8 @@
   [user]
   (hash-map
    :id (:id user)
-   :first_name (:first-name user)
-   :last_name (:last-name user)
+   :username (:username user)
+   :password (:password user)
    :email (:email user)
    :role_id (case (:role user)
               "Customer" 1
@@ -145,8 +145,7 @@
 (defn user-dialog
   "Form dialog to add a new user"
   [dialog-open?]
-  (let [user (r/atom {:first_name ""
-                      :last_name ""
+  (let [user (r/atom {:username ""
                       :email ""})
         selected-role (r/atom 1)]
     [:div
@@ -163,18 +162,9 @@
        [text-field {:auto-focus true
                     :margin :dense
                     :id :first-name-field
-                    :label "First Name"
+                    :label "Username"
                     :on-change (fn [e]
-                                 (swap! user assoc-in [:first_name] (event-value e)))
-                    :type :text
-                    :full-width true
-                    :variant :standard}]
-       [text-field {:auto-focus false
-                    :margin :dense
-                    :id :last-name-field
-                    :label "Last Name"
-                    :on-change (fn [e]
-                                 (swap! user assoc-in [:last_name] (event-value e)))
+                                 (swap! user assoc-in [:username] (event-value e)))
                     :type :text
                     :full-width true
                     :variant :standard}]
@@ -192,8 +182,7 @@
         [button {:on-click #(reset! dialog-open? false)} "Close"]
         [button {:on-click #(do
                               (post-user (merge @user {:role_id @selected-role}))
-                              (reset! user {:first_name ""
-                                            :last_name ""
+                              (reset! user {:username ""
                                             :email ""})
                               (reset! dialog-open? false)
                               (get-users users))} "Submit"]]]]]))
@@ -201,11 +190,8 @@
 (def columns [{:field :id
                :headerName "ID"
                :width 80}
-              {:field :first-name
-               :headerName "First name"
-               :width 130}
-              {:field :last-name
-               :headerName "Last name"
+              {:field :username
+               :headerName "Username"
                :width 130}
               {:field :email
                :headerName "Email"

@@ -1,7 +1,17 @@
 (ns ecommerce.clj.model.users-model
   "Model for user and user related data"
-  (:require [next.jdbc :as jdbc]
+  (:require [buddy.hashers :refer [check encrypt]]
+            [clojure.tools.logging :as log]
+            [honey.sql :as hsql]
+            [honey.sql.helpers :as hh]
+            [next.jdbc :as jdbc]
+            [next.jdbc.result-set :as rs]
             [next.jdbc.sql :as sql]))
+
+(defn db-query-one [db sql]
+  (jdbc/execute-one! db sql
+                 {:return-keys true
+                  :builder-fn rs/as-unqualified-maps}))
 
 (def ^:private roles
   "Different roles of users"
@@ -9,9 +19,11 @@
 
 (def ^:private initial-user-data
   "Create the database with this data."
-  [{:first_name "Sammy" :last_name "Shea"
+  [{:username "Sammy"
+    :password "password"
     :email "sammy@sammyshea.com" :role_id 1}
-   {:first_name "John" :last_name "Smith"
+   {:username "John"
+    :password "1234"
     :email "john@smith.com" :role_id 2}])
 
 (defn populate-users
@@ -26,8 +38,8 @@
                          [(str "
                                 create table users (
                                 id            integer primary key autoincrement,
-                                first_name    varchar(32),
-                                last_name     varchar(32),
+                                username      varchar(32),
+                                password      varchar(32),
                                 email         varchar(64),
                                 role_id integer not null)")])
       (println "Created database and added user tables!")
@@ -55,7 +67,7 @@
              ["select a.*, r.name
                from users a
                join role r on a.role_id = r.id
-               order by a.last_name, a.first_name"]))
+               order by a.username"]))
 
 (defn get-user-by-id
   "Returns a user given an id"
@@ -67,19 +79,46 @@
   [db]
   (sql/query db ["select * from role order by name"]))
 
-(defn save-user
-  "Attempts to save a user. If it exists, 
-   it is an update, else saving a new user."
-  [db user]
-  (let [id (:id user)]
-    (if (and id (not (zero? id)))
-      (sql/update! db :users
-                   (dissoc user :users/id)
-                   {:id id})
-      (sql/insert! db :users
-                   (dissoc user :users/id)))))
-
 (defn delete-user-by-id
   "Deletes a user given an id"
   [db id]
   (sql/delete! db :users {:id id}))
+
+(defn create-user
+  [db {:keys [username password email role_id]}]
+  (let [hashed-password (encrypt password)
+        created-user (->
+                      (hh/insert-into :users)
+                      (hh/columns :username :password :email :role_id)
+                      (hh/values [[username hashed-password email role_id]])
+                      hsql/format
+                      (#(db-query-one db %)))
+        sanitized-user (dissoc created-user :password)]
+    (log/info "user" sanitized-user)
+    sanitized-user))
+
+(defn get-user-by-credientials
+  [db {:keys [username password]}]
+  (log/info "login" username password)
+  (let [user (-> (hh/select :*)
+                 (hh/from :users)
+                 (hh/where := :username username)
+                 hsql/format
+                 (#(db-query-one db %)))
+        sanitized-user (dissoc user :password)]
+    (log/info "user" sanitized-user)
+    (if (and user (check password (:password user)))
+      sanitized-user
+      nil)))
+
+(defn get-user-by-payload
+  [db {:keys [username]}]
+  (let [user (-> (hh/select :*)
+                 (hh/from :users)
+                 (hh/where := :username username)
+                 hsql/format
+                 (#(db-query-one db %)))
+        sanitized-user (dissoc user :password)]
+      (if user
+        sanitized-user
+        nil)))
