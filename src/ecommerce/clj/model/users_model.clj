@@ -31,17 +31,18 @@
   [db]
     (try
       (jdbc/execute-one! db
-                         [(str "create table role (
-                                id            integer primary key autoincrement,
-                                name          varchar(32))")])
+                         (hsql/format {:create-table :role
+                                       :with-columns
+                                       [[:id :integer :primary-key]
+                                        [:name [:varchar 32] [:not nil]]]}))
       (jdbc/execute-one! db
-                         [(str "
-                                create table users (
-                                id            integer primary key autoincrement,
-                                username      varchar(32),
-                                password      varchar(32),
-                                email         varchar(64),
-                                role_id integer not null)")])
+                         (hsql/format {:create-table :users
+                                       :with-columns
+                                       [[:id :integer :primary-key]
+                                        [:username [:varchar 32] [:not nil]]
+                                        [:password [:varchar 32] [:not nil]]
+                                        [:email [:varchar 64] [:not nil]]
+                                        [:role_id :integer [:not nil]]]}))
       (println "Created database and added user tables!")
       ;; if table creation was successful, it didn't exist before
       ;; so populate it...
@@ -59,25 +60,15 @@
         (println "Looks like the database is already setup?"))))
 
 (defn get-users
-  "Return all available users, sorted by name.
-   This is a join and keys will be namespace-qualified in table:
-  users/id, role/name"
+  "Returns all users, removes password before returning"
   [db]
-  (sql/query db
-             ["select a.*, r.name
-               from users a
-               join role r on a.role_id = r.id
-               order by a.username"]))
-
-(defn get-user-by-id
-  "Returns a user given an id"
-  [db id]
-  (sql/get-by-id db :users id))
-
-(defn get-roles
-  "Returns all users under a certain role"
-  [db]
-  (sql/query db ["select * from role order by name"]))
+  (let [users (->
+               (hh/select :*)
+               (hh/from :users)
+               hsql/format
+               (#(sql/query db %)))
+        sanitized-users (map #(dissoc % :password) users)]
+    sanitized-users))
 
 (defn delete-user-by-id
   "Deletes a user given an id"

@@ -20,6 +20,9 @@
    [reagent-mui.material.form-control :refer [form-control]]
    [reagent-mui.material.select :refer [select]]))
    
+(def ^:private roles
+  "Different roles of users"
+  ["Customer" "Manager" "Staff"])
 
 (defonce users (r/atom nil))
 
@@ -66,7 +69,7 @@
                   :username (:users/username %)
                   :password (:users/password %)
                   :email (:users/email %)
-                  :role (:role/name %))
+                  :role (get roles (:users/role_id %)))
        users))
 
 (defn format-user-data-back 
@@ -121,72 +124,6 @@
 (defn row-update-error [error]
   (.log js/console (str error)))
 
-(defn role-select
-  "Select component for roles"
-  [selected-role]
-    [box {:component :form
-          :sx {:mt 5}}
-     [form-control
-      [input-label {:id "select-roles"}
-       "Role"]
-      [select {:native false
-               :value @selected-role
-               :on-change (fn [e] (reset! selected-role (event-value e)))
-               :label "Role"
-               :id "select-roles"
-               :label-id "select-roles"}
-       [menu-item {:value 1}
-        "Customer"]
-       [menu-item {:value 2}
-        "Manager"]
-       [menu-item {:value 3}
-        "Staff"]]]])
-
-(defn user-dialog
-  "Form dialog to add a new user"
-  [dialog-open?]
-  (let [user (r/atom {:username ""
-                      :email ""})
-        selected-role (r/atom 1)]
-    [:div
-     [button {:variant :outlined
-              :on-click #(reset! dialog-open? true)
-              :start-icon (r/as-element [add-icon])}
-      "Add New User"]
-     [dialog {:open @dialog-open?
-              :on-close #(reset! dialog-open? false)}
-      [dialog-title "Add New User"]
-      [dialog-content
-       [dialog-content-text
-        "To add a new user, please enter a name, email, and role"]
-       [text-field {:auto-focus true
-                    :margin :dense
-                    :id :first-name-field
-                    :label "Username"
-                    :on-change (fn [e]
-                                 (swap! user assoc-in [:username] (event-value e)))
-                    :type :text
-                    :full-width true
-                    :variant :standard}]
-       [text-field {:auto-focus false
-                    :margin :dense
-                    :id :email-field
-                    :label "Email"
-                    :on-change (fn [e]
-                                 (swap! user assoc-in [:email] (event-value e)))
-                    :type :email
-                    :full-width true
-                    :variant :standard}]
-       [role-select selected-role]
-       [dialog-actions
-        [button {:on-click #(reset! dialog-open? false)} "Close"]
-        [button {:on-click #(do
-                              (post-user (merge @user {:role_id @selected-role}))
-                              (reset! user {:username ""
-                                            :email ""})
-                              (reset! dialog-open? false)
-                              (get-users users))} "Submit"]]]]]))
-
 (def columns [{:field :id
                :headerName "ID"
                :width 80}
@@ -219,12 +156,10 @@
 (defn users-page 
   "Main function defining users page"
   []
-  (let [add-user-dialog (r/atom false)
-        remove-user-dialog (r/atom false)]
+  (let [remove-user-dialog (r/atom false)]
     (get-users users)
     (fn []
       [:div
        [:h3 "Users List"]
        [data-grid-component (format-users-data @users) columns]
-       [user-dialog add-user-dialog]
        [row-deletion-button remove-user-dialog]])))

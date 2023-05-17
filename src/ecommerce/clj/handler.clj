@@ -19,7 +19,7 @@
 
 (defn default-handler
   "Serves the default.html page (links to clojurescript)"
-  [request]
+  [req]
   (response/response (slurp (io/resource "index.html"))))
 
 (def middleware-db
@@ -49,8 +49,7 @@
                         :handler users/login}}]
       ["/me" {:get {:middleware [wrap-jwt-authentication auth-middleware]
                     :handler users/me}}]
-      ["/users" {:get {:middleware [wrap-jwt-authentication auth-middleware]
-                       :handler users/get-users}}]
+      ["/users" {:get {:handler users/get-users}}]
       ["/users/:id" {:delete {:parameters {:path {:id int?}}
                               :handler users/delete-by-id}}]
       ["/products" {:get {:handler products/get-products}

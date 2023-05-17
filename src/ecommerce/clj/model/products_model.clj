@@ -1,8 +1,9 @@
 (ns ecommerce.clj.model.products-model
   "Model for products data"
-  (:require [next.jdbc :as jdbc]
-            [next.jdbc.sql :as sql]
-            [honey.sql :as hsql]))
+  (:require
+   [next.jdbc :as jdbc]
+   [next.jdbc.sql :as sql]
+   [honey.sql :as hsql]))
 
 (def ^:private initial-product-data
   [{:name "Apples" :description "Red Fruit" :category "Fruit" :price 4.5 :quantity 100}

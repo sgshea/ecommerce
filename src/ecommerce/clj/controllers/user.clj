@@ -1,17 +1,18 @@
 (ns ecommerce.clj.controllers.user
   "API controller for user related data"
-  (:require [clojure.tools.logging :as log]
-            [ecommerce.clj.model.users-model :as model]
-            [ecommerce.clj.auth-utils :refer [create-token]]
-            [ring.util.response :as r]))
+  (:require
+   [ecommerce.clj.model.users-model :as model]
+   [ecommerce.clj.auth-utils :refer [create-token]]
+   [ring.util.response :as r]))
 
 (defn get-users
-  "Render the list view with all the users"
+  "Gets all users"
   [req]
-  (let [users (model/get-users (:db req))]
-    (r/response users)))
+  {:status 200
+   :body (model/get-users (:db req))})
 
 (defn register
+  "Creates a new user and returns the user with token"
   [{:keys [db parameters]}]
   (let [data (:body parameters)
         user (model/create-user db data)]
@@ -20,6 +21,7 @@
             :token (create-token user)}}))
 
 (defn login
+  "Login a user, returning their token"
   [{:keys [db parameters]}]
   (let [data (:body parameters)
         user (model/get-user-by-credientials db data)]
@@ -31,7 +33,7 @@
               :token (create-token user)}})))
 
 (defn me
-  "Gets the current user"
+  "Gets the current user token"
   [req]
   (let [payload (:identity req)
         user (model/get-user-by-payload (:db req) payload)]
@@ -49,8 +51,9 @@
 ;;                    (get-in req [:parameters :body]))
 ;;   (r/status 200))
 
-(defn delete-by-id [req]
-  (log/info "deleting user: " (get-in req [:path-params :id]))
-  (model/delete-user-by-id (:db req)
-                           (get-in req [:path-params :id]))
+(defn delete-by-id 
+  "Deletes a specific user given id"
+  [{:keys [db path-params]}]
+  (model/delete-user-by-id db
+                           (:id path-params))
   (r/status 200))

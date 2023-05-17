@@ -8,6 +8,7 @@
    [fipp.edn :as fedn]
    [ecommerce.cljs.users :as users]
    [ecommerce.cljs.products :as products]
+   [ecommerce.cljs.user-login :as login-page]
    [reagent-mui.colors :as colors]
    [reagent-mui.styles :as styles]
    [reagent-mui.material.css-baseline :refer [css-baseline]]
@@ -49,6 +50,8 @@
 (def pages
   [{:name "Home"
     :link ::home}
+   {:name "Login"
+    :link ::login}
    {:name "Users"
     :link ::users}
    {:name "Products"
@@ -128,8 +131,7 @@
         (if @match
           (let [view (:view (:data @match))]
             [view @match])
-          nil)
-        [:pre (with-out-str (fedn/pprint @match))]]]
+          nil)]]
       ]])
 
 (defn home []
@@ -140,6 +142,9 @@
     {:name ::home
      :view home}]
 
+   ["/login"
+    {:name ::login
+     :view login-page/login-page}]
    ["/users"
     {:name ::users
      :view users/users-page}]
