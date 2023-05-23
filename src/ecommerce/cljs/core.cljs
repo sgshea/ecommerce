@@ -5,7 +5,6 @@
    [reitit.frontend :as rf]
    [reitit.frontend.easy :as rfe]
    [reitit.coercion.spec :as rss]
-   [fipp.edn :as fedn]
    [ecommerce.cljs.users :as users]
    [ecommerce.cljs.products :as products]
    [ecommerce.cljs.user-login :as login-page]

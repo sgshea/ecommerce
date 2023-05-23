@@ -1,13 +1,10 @@
 (ns ecommerce.cljs.user-login
   (:require
    [reagent.core :as r]
-   [ajax.core :refer [GET POST PUT DELETE]]
+   [reagent.dom :as d]
+   [ecommerce.cljs.auth :as auth]
+   [ajax.core :refer [POST]]
    [reagent-mui.material.button :refer [button]]
-   [reagent-mui.x.data-grid :refer [data-grid]]
-   [reagent-mui.util :refer [clj->js']]
-   [reagent-mui.icons.add :refer [add] :rename {add add-icon}]
-   [reagent-mui.icons.delete :refer [delete] :rename {delete delete-icon}]
-   [reagent-mui.icons.delete-forever :refer [delete-forever] :rename {delete-forever delete-forever-icon}]
    [reagent-mui.material.box :refer [box]]
    [reagent-mui.material.link :refer [link]]
    [reagent-mui.material.grid :refer [grid]]
@@ -18,12 +15,12 @@
    [reagent-mui.material.dialog :refer [dialog]]
    [reagent-mui.material.dialog-actions :refer [dialog-actions]]
    [reagent-mui.material.dialog-content :refer [dialog-content]]
-   [reagent-mui.material.dialog-content-text :refer [dialog-content-text]]
    [reagent-mui.material.dialog-title :refer [dialog-title]]
    [reagent-mui.material.input-label :refer [input-label]]
    [reagent-mui.material.menu-item :refer [menu-item]]
    [reagent-mui.material.form-control :refer [form-control]]
-   [reagent-mui.material.select :refer [select]]))
+   [reagent-mui.material.select :refer [select]]
+   [ecommerce.cljs.user-login :as login-page]))
 
 (def ^:private roles
   "Different roles of users"
@@ -32,6 +29,24 @@
 (defn event-value
   [e]
   (.. e -target -value))
+
+(defn handler 
+  "This handler needs to put the token into localstorage"
+  [response]
+  (auth/set-auth-token (:token response))
+  (.log js/console (auth/get-auth-token)))
+
+(defn login-user [user]
+  (POST "/api/login"
+    {:headers {"Accept" "application/transit+json"}
+     :params user
+     :handler handler}))
+
+(defn register-user [user]
+  (POST "/api/register"
+    {:headers {"Accept" "application/transit+json"}
+     :params user
+     :handler handler}))
 
 (defn role-select
   "Select component for roles"
@@ -57,18 +72,63 @@
 (defn user-dialog
   "Form dialog to add a new user"
   [dialog-open?]
-  (let [user (r/atom {:username ""
-                      :email ""
-                      :password ""})
+  (let [user-sign-up (r/atom {:username ""
+                              :email ""
+                              :password ""})
         selected-role (r/atom 1)]
-    [:div
-     [dialog {:open @dialog-open?
-              :on-close #(reset! dialog-open? false)}
-      [dialog-title "Sign up new account"]
-      [dialog-content
+    (fn []
+      [:div
+       [dialog {:open @dialog-open?
+                :on-close #(reset! dialog-open? false)}
+        [dialog-title "Sign up new account"]
+        [dialog-content
+         [text-field {:auto-focus true
+                      :margin :dense
+                      :label "Username"
+                      :on-change (fn [e]
+                                   (swap! user-sign-up assoc-in [:username] (event-value e)))
+                      :type :text
+                      :full-width true
+                      :variant :standard}]
+         [text-field {:auto-focus false
+                      :margin :dense
+                      :label "Email"
+                      :on-change (fn [e]
+                                   (swap! user-sign-up assoc-in [:email] (event-value e)))
+                      :type :email
+                      :full-width true
+                      :variant :standard}]
+         [text-field {:auto-focus false
+                      :margin :dense
+                      :label "Password"
+                      :on-change (fn [e]
+                                   (swap! user-sign-up assoc-in [:password] (event-value e)))
+                      :type :email
+                      :full-width true
+                      :variant :standard}]
+         [role-select selected-role]
+         [dialog-actions
+          [button {:on-click #(reset! dialog-open? false)} "Close"]
+          [button {:on-click #(do
+                                (register-user (into @user-sign-up {:role_id @selected-role}))
+                                (reset! user-sign-up {:username ""
+                                                      :email ""
+                                                      :password ""})
+                                (reset! selected-role 1)
+                                (reset! dialog-open? false))} "Submit"]]]]])))
+
+(defn login-form
+  [sign-up-dialog-open?]
+  (let [user (r/atom {:username ""
+                      :password ""})]
+    (fn []
+      [box {:m 5
+            :align-items :center}
+       [typography {:variant :h5
+                    :mb 1}
+        "Sign in"]
        [text-field {:auto-focus true
                     :margin :dense
-                    :id :first-name-field
                     :label "Username"
                     :on-change (fn [e]
                                  (swap! user assoc-in [:username] (event-value e)))
@@ -77,69 +137,24 @@
                     :variant :standard}]
        [text-field {:auto-focus false
                     :margin :dense
-                    :id :email-field
-                    :label "Email"
+                    :label "Password"
                     :on-change (fn [e]
-                                 (swap! user assoc-in [:email] (event-value e)))
+                                 (swap! user assoc-in [:password] (event-value e)))
                     :type :email
                     :full-width true
                     :variant :standard}]
-     [text-field {:auto-focus false
-                  :margin :dense
-                  :id :password
-                  :label "Password"
-                  :on-change (fn [e]
-                               (swap! user assoc-in [:password] (event-value e)))
-                  :type :email
-                  :full-width true
-                  :variant :standard}]
-       [role-select selected-role]
-       [dialog-actions
-        [button {:on-click #(reset! dialog-open? false)} "Close"]
-        [button {:on-click #(do
-                              ;; post here
-                              (reset! user {:username ""
-                                            :email ""})
-                              (reset! dialog-open? false))} "Submit"]]]]]))
-
-(defn login-form
-  [sign-up-dialog-open?]
-  (let [user (r/atom {:username ""
-                      :password ""})]
-    [box {:m 5
-          :align-items :center}
-     [typography {:variant :h5
-                  :mb 1}
-      "Sign in"]
-     [text-field {:auto-focus true
-                  :margin :dense
-                  :id :first-name-field
-                  :label "Username"
-                  :on-change (fn [e]
-                               (swap! user assoc-in [:username] (event-value e)))
-                  :type :text
-                  :full-width true
-                  :variant :standard}]
-     [text-field {:auto-focus false
-                  :margin :dense
-                  :id :password
-                  :label "Password"
-                  :on-change (fn [e]
-                               (swap! user assoc-in [:password] (event-value e)))
-                  :type :email
-                  :full-width true
-                  :variant :standard}]
-     [button {:full-width true
-              :variant :contained
-              :sx {:mt 3
-                   :mb 2}}
-      "Sign In"]
-     [grid {:container true}
-      [grid {:item true}
-       [link {:component :button
-              :variant :body1
-              :on-click #(reset! sign-up-dialog-open? true)}
-        "Sign up"]]]]))
+       [button {:full-width true
+                :variant :contained
+                :sx {:mt 3
+                     :mb 2}
+                :on-click #(login-user @user)}
+        "Sign In"]
+       [grid {:container true}
+        [grid {:item true}
+         [link {:component :button
+                :variant :body1
+                :on-click #(reset! sign-up-dialog-open? true)}
+          "Sign up"]]]])))
 
 (defn login-page
   "Main function for login/signup page"
@@ -153,3 +168,12 @@
             :align-items :center}
       [paper {:elevation 6}
        [login-form sign-up-dialog-open?]]]]))
+
+;; -------------------------
+;; Initialize app
+
+(defn ^:dev/after-load mount-root []
+  (d/render [login-page] (.getElementById js/document "login")))
+
+(defn ^:export init! []
+  (mount-root))
