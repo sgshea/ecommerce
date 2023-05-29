@@ -22,6 +22,11 @@
   [req]
   (response/response (slurp (io/resource "index.html"))))
 
+(defn login-handler
+  "Serves login.html page (links to clojurescript)"
+  [req]
+  (response/response (slurp (io/resource "login.html"))))
+
 (def middleware-db
   {:name ::db
    :compile (fn [{:keys [db]} _]
@@ -33,6 +38,7 @@
   (ring/ring-handler
    (ring/router 
     [["/" {:get {:handler default-handler}}]
+     ["/login" {:get {:handler login-handler}}]
       ["/swagger.json"
        {:get {:no-doc true
               :swagger {:info {:title "ecommerce api"}
