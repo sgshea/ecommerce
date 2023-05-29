@@ -168,12 +168,3 @@
             :align-items :center}
       [paper {:elevation 6}
        [login-form sign-up-dialog-open?]]]]))
-
-;; -------------------------
-;; Initialize app
-
-(defn ^:dev/after-load mount-root []
-  (d/render [login-page] (.getElementById js/document "login")))
-
-(defn ^:export init! []
-  (mount-root))

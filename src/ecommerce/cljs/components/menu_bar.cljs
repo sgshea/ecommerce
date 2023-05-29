@@ -14,16 +14,6 @@
    [reagent-mui.icons.menu :refer [menu] :rename {menu menu-icon}]
    [reagent-mui.material.icon-button :refer [icon-button]]))
 
-(defonce pages
-  [{:name "Home"
-    :link ::home}
-   {:name "Login"
-    :link ::login}
-   {:name "Users"
-    :link ::users}
-   {:name "Products"
-    :link ::products}])
-
 (defonce anchorElNav (r/atom false))
 
 (defn pages-button
@@ -36,7 +26,7 @@
 
 (defn menu-bar
   "Top bar for the pages"
-  [theme-mode]
+  [theme-mode pages]
   [app-bar {:enableColorOnDark true
             :color "transparent"
             :position :sticky}

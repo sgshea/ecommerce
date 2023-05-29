@@ -44,13 +44,6 @@
        :body {:user user
               :token (create-token user)}})))
 
-;; (defn edit
-;;   [req]
-;;   (log/info "editing user: " (:body (:parameters req)))
-;;   (model/save-user (:db req)
-;;                    (get-in req [:parameters :body]))
-;;   (r/status 200))
-
 (defn delete-by-id 
   "Deletes a specific user given id"
   [{:keys [db path-params]}]

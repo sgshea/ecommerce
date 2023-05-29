@@ -12,8 +12,7 @@
    [ecommerce.cljs.user-login :as login-page]
 
    [reagent-mui.colors :as colors]
-   [reagent-mui.styles :as styles]
-   ))
+   [reagent-mui.styles :as styles]))
 
 ;; Set dark as default
 (defonce theme-mode
@@ -22,6 +21,16 @@
 (defn custom-theme [mode] {:palette {:mode mode
                              :primary colors/blue 
                              :secondary colors/red}})
+
+(def pages
+  [{:name "Home"
+    :link ::home}
+   {:name "Login"
+    :link ::login}
+   {:name "Users"
+    :link ::users}
+   {:name "Products"
+    :link ::products}])
 
 ;; -------------------------
 ;; Initialize website
@@ -37,7 +46,7 @@
    [:<>
     [styles/theme-provider (styles/create-theme (custom-theme @theme-mode))
      [css-baseline
-      [menu-bar/menu-bar theme-mode]
+      [menu-bar/menu-bar theme-mode pages]
       [:div
        (if @match
          (let [view (:view (:data @match))]
