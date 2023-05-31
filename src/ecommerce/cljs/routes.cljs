@@ -9,7 +9,6 @@
    [ecommerce.cljs.components.menu-bar :as menu-bar]
    [ecommerce.cljs.users :as users]
    [ecommerce.cljs.products :as products]
-   [ecommerce.cljs.user-login :as login-page]
 
    [reagent-mui.colors :as colors]
    [reagent-mui.styles :as styles]))
@@ -25,8 +24,6 @@
 (def pages
   [{:name "Home"
     :link ::home}
-   {:name "Login"
-    :link ::login}
    {:name "Users"
     :link ::users}
    {:name "Products"
@@ -58,9 +55,6 @@
     {:name ::home
      :view home}]
 
-   ["/login"
-    {:name ::login
-     :view login-page/login-page}]
    ["/users"
     {:name ::users
      :view users/users-page}]

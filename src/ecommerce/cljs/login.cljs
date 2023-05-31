@@ -1,9 +1,8 @@
-(ns ecommerce.cljs.user-login
+(ns ecommerce.cljs.login
   (:require
    [reagent.core :as r]
    [reagent.dom :as d]
    [ecommerce.cljs.auth :as auth]
-   [ajax.core :refer [POST]]
    [reagent-mui.material.button :refer [button]]
    [reagent-mui.material.box :refer [box]]
    [reagent-mui.material.link :refer [link]]
@@ -20,7 +19,7 @@
    [reagent-mui.material.menu-item :refer [menu-item]]
    [reagent-mui.material.form-control :refer [form-control]]
    [reagent-mui.material.select :refer [select]]
-   [ecommerce.cljs.user-login :as login-page]))
+   [ecommerce.cljs.login :as login-page]))
 
 (def ^:private roles
   "Different roles of users"
@@ -29,24 +28,6 @@
 (defn event-value
   [e]
   (.. e -target -value))
-
-(defn handler 
-  "This handler needs to put the token into localstorage"
-  [response]
-  (auth/set-auth-token (:token response))
-  (.log js/console (auth/get-auth-token)))
-
-(defn login-user [user]
-  (POST "/api/login"
-    {:headers {"Accept" "application/transit+json"}
-     :params user
-     :handler handler}))
-
-(defn register-user [user]
-  (POST "/api/register"
-    {:headers {"Accept" "application/transit+json"}
-     :params user
-     :handler handler}))
 
 (defn role-select
   "Select component for roles"
@@ -110,7 +91,7 @@
          [dialog-actions
           [button {:on-click #(reset! dialog-open? false)} "Close"]
           [button {:on-click #(do
-                                (register-user (into @user-sign-up {:role_id @selected-role}))
+                                (auth/register-user (into @user-sign-up {:role_id @selected-role}))
                                 (reset! user-sign-up {:username ""
                                                       :email ""
                                                       :password ""})
@@ -147,7 +128,7 @@
                 :variant :contained
                 :sx {:mt 3
                      :mb 2}
-                :on-click #(login-user @user)}
+                :on-click #(auth/login-user @user)}
         "Sign In"]
        [grid {:container true}
         [grid {:item true}
@@ -168,3 +149,12 @@
             :align-items :center}
       [paper {:elevation 6}
        [login-form sign-up-dialog-open?]]]]))
+
+;; -------------------------
+;; Initialize app (login page)
+
+(defn ^:dev/after-load mount-root []
+  (d/render [login-page] (.getElementById js/document "login")))
+
+(defn ^:export init! []
+  (mount-root))

@@ -1,4 +1,4 @@
-(ns ecommerce.cljs.core
+(ns ecommerce.cljs.staff-core
   (:require
    [reagent.dom :as d]
    [ecommerce.cljs.routes :refer [router-start! initialize]]))

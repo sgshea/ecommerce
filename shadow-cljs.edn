@@ -9,6 +9,14 @@
  :builds       {:app {:target     :browser
                       :output-dir "resources/public/assets/js"
                       :asset-path "/js"
-                      :modules    {:app {:entries [ecommerce.cljs.core]
-                                         :init-fn ecommerce.cljs.core/init!}}
+                      :modules    {:common {:entries [ecommerce.cljs.routes]}
+                                   :login {:entries [ecommerce.cljs.login]
+                                           :init-fn ecommerce.cljs.login/init!
+                                           :depends-on #{:common}}
+                                   :user {:entries [ecommerce.cljs.user-core]
+                                           :init-fn ecommerce.cljs.user-core/init!
+                                           :depends-on #{:common}}
+                                   :staff {:entries [ecommerce.cljs.staff-core]
+                                           :init-fn ecommerce.cljs.staff-core/init!
+                                           :depends-on #{:common}}}
                       :devtools   {:after-load ecommerce.cljs.core/mount-root}}}}

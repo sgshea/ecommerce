@@ -13,19 +13,24 @@
             [ecommerce.clj.controllers.products :as products]
             [ring.middleware.keyword-params :refer [wrap-keyword-params]]
             [clojure.java.io :as io]
-            [ring.util.response :as response]
-            [ecommerce.clj.auth-utils :refer [wrap-jwt-authentication auth-middleware]]
+            [ring.util.response :refer [response]]
+            [ecommerce.clj.auth-utils :refer [wrap-jwt-authentication auth-middleware is-user is-staff default-route]]
             ))
-
-(defn default-handler
-  "Serves the default.html page (links to clojurescript)"
-  [req]
-  (response/response (slurp (io/resource "index.html"))))
 
 (defn login-handler
   "Serves login.html page (links to clojurescript)"
   [req]
-  (response/response (slurp (io/resource "login.html"))))
+  (response (slurp (io/resource "login.html"))))
+
+(defn home-handler
+  "Serves login.html page (links to clojurescript)"
+  [req]
+  (response (slurp (io/resource "user.html"))))
+
+(defn staff-handler
+  "Serves staff.html page (links to clojurescript)"
+  [req]
+  (response (slurp (io/resource "staff.html"))))
 
 (def middleware-db
   {:name ::db
@@ -37,7 +42,12 @@
 (defn app [db]
   (ring/ring-handler
    (ring/router 
-    [["/" {:get {:handler default-handler}}]
+    [
+     ["/" {:get {:middleware [wrap-jwt-authentication default-route]
+                 :handler home-handler}}]
+     ["/home" {:get {:middleware [wrap-jwt-authentication default-route]
+                     :handler home-handler}}]
+     ["/staff" {:get {:handler staff-handler}}]
      ["/login" {:get {:handler login-handler}}]
       ["/swagger.json"
        {:get {:no-doc true
