@@ -103,7 +103,7 @@
   (let [user (r/atom {:username ""
                       :password ""})]
     (fn []
-      [box {:m 5
+      [box {:m 15
             :align-items :center}
        [typography {:variant :h5
                     :mb 1}

@@ -1,6 +1,6 @@
 (ns user
   (:require [integrant.repl :as ig-repl]
-            [ecommerce.system :as system]))
+            [ecommerce.clj.system :as system]))
 
 (ig-repl/set-prep! (fn [] system/config))
 

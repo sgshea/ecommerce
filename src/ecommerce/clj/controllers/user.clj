@@ -3,7 +3,8 @@
   (:require
    [ecommerce.clj.model.users-model :as model]
    [ecommerce.clj.auth-utils :refer [create-token]]
-   [ring.util.response :as r]))
+   [ring.util.response :as r]
+   [clojure.tools.logging :as log]))
 
 (defn get-users
   "Gets all users"

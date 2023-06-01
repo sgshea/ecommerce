@@ -4,7 +4,8 @@
    [buddy.auth.backends :as backends]
    [buddy.auth.middleware :refer [wrap-authentication]]
    [buddy.sign.jwt :as jwt]
-   [ring.util.response :refer [redirect]]))
+   [ring.util.response :refer [redirect]]
+   [clojure.tools.logging :as log]))
 
 (def jwt-secret "JWT_SECRET")
 (def backend (backends/jws {:secret jwt-secret}))
@@ -31,11 +32,12 @@
   [handler]
   (fn [request]
     (let [user-role (return-user-id request)]
+      (log/info "role!" user-role)
       (case user-role
         1 (redirect "/home")
         2 (redirect "/staff")
         3 (redirect "/staff")
-        (handler request)))))
+        (redirect "/login")))))
 
 (defn is-user
   "Checks that there is a valid authentication token and that the user's role is a user"

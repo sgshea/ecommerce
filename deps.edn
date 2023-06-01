@@ -19,7 +19,6 @@
   
   org.clojure/clojurescript {:mvn/version "1.11.54"}}
 
-
  :aliases
  {:dev {:extra-paths ["dev"]
         :extra-deps {integrant/repl {:mvn/version "0.3.2"}}}

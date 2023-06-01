@@ -44,10 +44,11 @@
    (ring/router 
     [
      ["/" {:get {:middleware [wrap-jwt-authentication default-route]
-                 :handler home-handler}}]
-     ["/home" {:get {:middleware [wrap-jwt-authentication default-route]
-                     :handler home-handler}}]
-     ["/staff" {:get {:handler staff-handler}}]
+                 :handler login-handler}}]
+     ["/home" {:get {:middleware [wrap-jwt-authentication is-user]
+                      :handler home-handler}}]
+     ["/staff" {:get {:middleware [wrap-jwt-authentication is-staff]
+                      :handler staff-handler}}]
      ["/login" {:get {:handler login-handler}}]
       ["/swagger.json"
        {:get {:no-doc true

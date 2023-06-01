@@ -1,8 +1,7 @@
 (ns ecommerce.cljs.auth
   (:require
-    [reagent.core :as r]
-    [reitit.frontend.easy :as rfe]
-    [ajax.core :refer [POST]]))
+   [reagent.core :as r]
+   [ajax.core :refer [POST]]))
 
 ;; Auth state
 (defonce auth-state (r/atom nil))
@@ -28,6 +27,7 @@
 (defn auth-success!
   "Handler for success"
   [{{:keys [token] :as user} :user}]
+  ;; set token into local storage
   (set-auth-token token)
   (reset! auth-state user)
   (reset! error-state nil)
