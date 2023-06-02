@@ -45,9 +45,9 @@
     [
      ["/" {:get {:middleware [wrap-jwt-authentication default-route]
                  :handler login-handler}}]
-     ["/home" {:get {:middleware [wrap-jwt-authentication is-user]
+     ["/home" {:get {:middleware [wrap-jwt-authentication]
                       :handler home-handler}}]
-     ["/staff" {:get {:middleware [wrap-jwt-authentication is-staff]
+     ["/staff" {:get {:middleware [wrap-jwt-authentication]
                       :handler staff-handler}}]
      ["/login" {:get {:handler login-handler}}]
       ["/swagger.json"

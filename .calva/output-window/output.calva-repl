@@ -9,71 +9,8 @@
 ; You can make Calva auto-select this.
 ;   - See https://calva.io/connect-sequences/
 ; 
-; Starting Jack-in Terminal: pushd /home/sammy/Documents/csc/clojure/ecommerce ; clojure -Sdeps '{:deps {nrepl/nrepl {:mvn/version,"1.0.0"},cider/cider-nrepl {:mvn/version,"0.28.5"}}}' -A:server ; popd
-; Interrupting Jack-in process.
-; Jacking in...
-; Connecting using "deps.edn" project type.
-; You can make Calva auto-select this.
-;   - See https://calva.io/connect-sequences/
-; 
 ; Starting Jack-in Terminal: pushd /home/sammy/Documents/csc/clojure/ecommerce ; clojure -Sdeps '{:deps {nrepl/nrepl {:mvn/version,"1.0.0"},cider/cider-nrepl {:mvn/version,"0.28.5"}}}' -A:dev -m nrepl.cmdline --middleware "[cider.nrepl/cider-middleware]" ; popd
-; Interrupting Jack-in process.
-; Jacking in...
-; Connecting using "deps.edn" project type.
-; You can make Calva auto-select this.
-;   - See https://calva.io/connect-sequences/
-; 
-; Starting Jack-in Terminal: pushd /home/sammy/Documents/csc/clojure/ecommerce ; clojure -Sdeps '{:deps {nrepl/nrepl {:mvn/version,"1.0.0"},cider/cider-nrepl {:mvn/version,"0.28.5"}}}' -A:dev -m nrepl.cmdline --middleware "[cider.nrepl/cider-middleware]" ; popd
-; Interrupting Jack-in process.
-; Jacking in...
-; Connecting using "deps.edn + shadow-cljs" project type.
-; You can make Calva auto-select this.
-;   - See https://calva.io/connect-sequences/
-; 
-; Starting Jack-in Terminal: pushd /home/sammy/Documents/csc/clojure/ecommerce ; clojure -Sdeps '{:deps {nrepl/nrepl {:mvn/version,"1.0.0"},cider/cider-nrepl {:mvn/version,"0.28.5"}}}' -A:dev -m nrepl.cmdline --middleware "[cider.nrepl/cider-middleware shadow.cljs.devtools.server.nrepl/middleware]" ; popd
-; Interrupting Jack-in process.
-; Jacking in...
-; Connecting using "deps.edn + shadow-cljs" project type.
-; You can make Calva auto-select this.
-;   - See https://calva.io/connect-sequences/
-; 
-; Starting Jack-in Terminal: pushd /home/sammy/Documents/csc/clojure/ecommerce ; clojure -Sdeps '{:deps {nrepl/nrepl {:mvn/version,"1.0.0"},cider/cider-nrepl {:mvn/version,"0.28.5"}}}' -A:dev -m nrepl.cmdline --middleware "[cider.nrepl/cider-middleware shadow.cljs.devtools.server.nrepl/middleware]" ; popd
-; Interrupting Jack-in process.
-; Jacking in...
-; Connecting using "deps.edn + shadow-cljs" project type.
-; You can make Calva auto-select this.
-;   - See https://calva.io/connect-sequences/
-; 
-; Starting Jack-in Terminal: pushd /home/sammy/Documents/csc/clojure/ecommerce ; clojure -Sdeps '{:deps {nrepl/nrepl {:mvn/version,"1.0.0"},cider/cider-nrepl {:mvn/version,"0.28.5"}}}' -A:dev -m nrepl.cmdline --middleware "[cider.nrepl/cider-middleware shadow.cljs.devtools.server.nrepl/middleware]" ; popd
-; Interrupting Jack-in process.
-; Jacking in...
-; Connecting using "deps.edn + shadow-cljs" project type.
-; You can make Calva auto-select this.
-;   - See https://calva.io/connect-sequences/
-; 
-; Starting Jack-in Terminal: pushd /home/sammy/Documents/csc/clojure/ecommerce ; clojure -Sdeps '{:deps {nrepl/nrepl {:mvn/version,"1.0.0"},cider/cider-nrepl {:mvn/version,"0.28.5"}}}' -A:dev -m nrepl.cmdline --middleware "[cider.nrepl/cider-middleware shadow.cljs.devtools.server.nrepl/middleware]" ; popd
-; Interrupting Jack-in process.
-; Jacking in...
-; Connecting using "deps.edn + shadow-cljs" project type.
-; You can make Calva auto-select this.
-;   - See https://calva.io/connect-sequences/
-; 
-; Starting Jack-in Terminal: pushd /home/sammy/Documents/csc/clojure/ecommerce ; clojure -Sdeps '{:deps {nrepl/nrepl {:mvn/version,"1.0.0"},cider/cider-nrepl {:mvn/version,"0.28.5"}}}' -A:dev -m nrepl.cmdline --middleware "[cider.nrepl/cider-middleware shadow.cljs.devtools.server.nrepl/middleware]" ; popd
-; Interrupting Jack-in process.
-; Jacking in...
-; Connecting using "deps.edn + shadow-cljs" project type.
-; You can make Calva auto-select this.
-;   - See https://calva.io/connect-sequences/
-; 
-; Starting Jack-in Terminal: pushd /home/sammy/Documents/csc/clojure/ecommerce ; clojure -Sdeps '{:deps {nrepl/nrepl {:mvn/version,"1.0.0"},cider/cider-nrepl {:mvn/version,"0.28.5"}}}'  -m nrepl.cmdline --middleware "[cider.nrepl/cider-middleware shadow.cljs.devtools.server.nrepl/middleware]" ; popd
-; Interrupting Jack-in process.
-; Jacking in...
-; Connecting using "deps.edn" project type.
-; You can make Calva auto-select this.
-;   - See https://calva.io/connect-sequences/
-; 
-; Starting Jack-in Terminal: pushd /home/sammy/Documents/csc/clojure/ecommerce ; clojure -Sdeps '{:deps {nrepl/nrepl {:mvn/version,"1.0.0"},cider/cider-nrepl {:mvn/version,"0.28.5"}}}'  -m nrepl.cmdline --middleware "[cider.nrepl/cider-middleware]" ; popd
-; Using host:port localhost:39785 ...
+; Using host:port localhost:42773 ...
 ; Hooking up nREPL sessions ...
 ; Connected session: clj
 ; TIPS:
@@ -89,6 +26,75 @@ clj꞉user꞉>  ; Use `alt+enter` to evaluate
 clj꞉user꞉> 
 ; Jack-in done.
 clj꞉user꞉> 
+(go)
+Exception: [SQLITE_ERROR] SQL error or missing database (table role already exists)
+Looks like the database is already setup?
+Exception: [SQLITE_ERROR] SQL error or missing database (table products already exists)
+Looks like the database is already setup?
+:initiated
+clj꞉user꞉> 
+; nREPL Connection was closed
+; Jacking in...
+; Connecting using "deps.edn" project type.
+; You can make Calva auto-select this.
+;   - See https://calva.io/connect-sequences/
+; 
+; Starting Jack-in Terminal: pushd /home/sammy/Documents/csc/clojure/ecommerce ; clojure -Sdeps '{:deps {nrepl/nrepl {:mvn/version,"1.0.0"},cider/cider-nrepl {:mvn/version,"0.28.5"}}}'  -m nrepl.cmdline --middleware "[cider.nrepl/cider-middleware]" ; popd
+; Using host:port localhost:33711 ...
+; Hooking up nREPL sessions ...
+; Connected session: clj
+; TIPS:
+;   - You can edit the contents here. Use it as a REPL if you like.
+;   - `alt+enter` evaluates the current top level form.
+;   - `ctrl+enter` evaluates the current form.
+;   - `alt+up` and `alt+down` traverse up and down the REPL command history
+;      when the cursor is after the last contents at the prompt
+;   - Clojure lines in stack traces are peekable and clickable.
+; Evaluating code from settings: 'calva.autoEvaluateCode.onConnect.clj'
+; Jacking in...
+nil
+clj꞉user꞉> 
+clj꞉user꞉> 
+; Jack-in done.
+clj꞉user꞉> 
+; Connecting using "deps.edn + shadow-cljs" project type.
+; You can make Calva auto-select this.
+;   - See https://calva.io/connect-sequences/
+; 
+; Starting Jack-in Terminal: pushd /home/sammy/Documents/csc/clojure/ecommerce ; clojure -Sdeps '{:deps {nrepl/nrepl {:mvn/version,"1.0.0"},cider/cider-nrepl {:mvn/version,"0.28.5"}}}' -A:dev -m nrepl.cmdline --middleware "[cider.nrepl/cider-middleware shadow.cljs.devtools.server.nrepl/middleware]" ; popd
+; nREPL Connection was closed
+; Jacking in...
+; Connecting using "deps.edn + ClojureScript built-in for browser" project type.
+; You can make Calva auto-select this.
+;   - See https://calva.io/connect-sequences/
+; 
+; Starting Jack-in Terminal: pushd /home/sammy/Documents/csc/clojure/ecommerce ; clojure -Sdeps '{:deps {nrepl/nrepl {:mvn/version,"1.0.0"},cider/cider-nrepl {:mvn/version,"0.28.5"},cider/piggieback {:mvn/version,"0.5.3"}}}' -A:dev -m nrepl.cmdline --middleware "[cider.nrepl/cider-middleware cider.piggieback/wrap-cljs-repl]" ; popd
+; Using host:port localhost:39199 ...
+; Hooking up nREPL sessions ...
+; Connected session: clj
+; TIPS:
+;   - You can edit the contents here. Use it as a REPL if you like.
+;   - `alt+enter` evaluates the current top level form.
+;   - `ctrl+enter` evaluates the current form.
+;   - `alt+up` and `alt+down` traverse up and down the REPL command history
+;      when the cursor is after the last contents at the prompt
+;   - Clojure lines in stack traces are peekable and clickable.
+; Evaluating code from settings: 'calva.autoEvaluateCode.onConnect.clj'
+nil
+clj꞉user꞉> 
+clj꞉user꞉> 
+; Creating cljs repl session...
+; Connecting cljs repl: deps.edn + ClojureScript built-in for browser...
+;   The Calva Connection Log might have more connection progress information.
+; Connected session: cljs
+; TIPS: You can choose which REPL to use (clj or cljs):
+;    *Calva: Toggle REPL connection*
+;    (There is a button in the status bar for this)
+; Evaluating code from settings: 'calva.autoEvaluateCode.onConnect.cljs'
+nil
+cljs꞉cljs.user꞉>  ; Use `alt+enter` to evaluate
+; Jack-in done.
+cljs꞉cljs.user꞉> 
 ; nREPL Connection was closed
 ; Jacking in...
 ; Connecting using "deps.edn" project type.
@@ -96,7 +102,7 @@ clj꞉user꞉> 
 ;   - See https://calva.io/connect-sequences/
 ; 
 ; Starting Jack-in Terminal: pushd /home/sammy/Documents/csc/clojure/ecommerce ; clojure -Sdeps '{:deps {nrepl/nrepl {:mvn/version,"1.0.0"},cider/cider-nrepl {:mvn/version,"0.28.5"}}}' -A:dev -m nrepl.cmdline --middleware "[cider.nrepl/cider-middleware]" ; popd
-; Using host:port localhost:42485 ...
+; Using host:port localhost:34501 ...
 ; Hooking up nREPL sessions ...
 ; Connected session: clj
 ; TIPS:
@@ -111,61 +117,72 @@ nil
 clj꞉user꞉> 
 clj꞉user꞉> 
 ; Jack-in done.
-clj꞉user꞉> 
-(go)
+clj꞉user꞉> (go)
 Exception: [SQLITE_ERROR] SQL error or missing database (table role already exists)
 Looks like the database is already setup?
 Exception: [SQLITE_ERROR] SQL error or missing database (table products already exists)
 Looks like the database is already setup?
 :initiated
 clj꞉user꞉> 
+; nREPL Connection was closed
+; Jacking in...
+; Connecting using "deps.edn" project type.
+; You can make Calva auto-select this.
+;   - See https://calva.io/connect-sequences/
+; 
+; Starting Jack-in Terminal: pushd /home/sammy/Documents/csc/clojure/ecommerce ; clojure -Sdeps '{:deps {nrepl/nrepl {:mvn/version,"1.0.0"},cider/cider-nrepl {:mvn/version,"0.28.5"}}}' -A:dev -m nrepl.cmdline --middleware "[cider.nrepl/cider-middleware]" ; popd
+; Using host:port localhost:39131 ...
+; Hooking up nREPL sessions ...
+; Connected session: clj
+; TIPS:
+;   - You can edit the contents here. Use it as a REPL if you like.
+;   - `alt+enter` evaluates the current top level form.
+;   - `ctrl+enter` evaluates the current form.
+;   - `alt+up` and `alt+down` traverse up and down the REPL command history
+;      when the cursor is after the last contents at the prompt
+;   - Clojure lines in stack traces are peekable and clickable.
+; Evaluating code from settings: 'calva.autoEvaluateCode.onConnect.clj'
 nil
-clj꞉ecommerce.clj.auth-utils꞉> 
+clj꞉user꞉> 
+clj꞉user꞉> 
+; Jack-in done.
+clj꞉user꞉> (go)
+; Syntax error compiling at (.calva/output-window/output.calva-repl:149:12).
+; Unable to resolve symbol: go in this context
+clj꞉user꞉> (integrant.repl/go)
+Exception: [SQLITE_ERROR] SQL error or missing database (table role already exists)
+Looks like the database is already setup?
+Exception: [SQLITE_ERROR] SQL error or missing database (table products already exists)
+Looks like the database is already setup?
+:initiated
+clj꞉ecommerce.cljs.router꞉> 
+; nREPL Connection was closed
+; Jacking in...
+; Connecting using "deps.edn" project type.
+; You can make Calva auto-select this.
+;   - See https://calva.io/connect-sequences/
+; 
+; Starting Jack-in Terminal: pushd /home/sammy/Documents/csc/clojure/ecommerce ; clojure -Sdeps '{:deps {nrepl/nrepl {:mvn/version,"1.0.0"},cider/cider-nrepl {:mvn/version,"0.28.5"}}}' -A:dev -m nrepl.cmdline --middleware "[cider.nrepl/cider-middleware]" ; popd
+; Using host:port localhost:33829 ...
+; Hooking up nREPL sessions ...
+; Connected session: clj
+; TIPS:
+;   - You can edit the contents here. Use it as a REPL if you like.
+;   - `alt+enter` evaluates the current top level form.
+;   - `ctrl+enter` evaluates the current form.
+;   - `alt+up` and `alt+down` traverse up and down the REPL command history
+;      when the cursor is after the last contents at the prompt
+;   - Clojure lines in stack traces are peekable and clickable.
+; Evaluating code from settings: 'calva.autoEvaluateCode.onConnect.clj'
 nil
-clj꞉ecommerce.clj.auth-utils꞉> 
-(reset)
-; Syntax error compiling at (.calva/output-window/output.calva-repl:126:1).
-; Unable to resolve symbol: reset in this context
-clj꞉ecommerce.clj.auth-utils꞉> 
-(halt)
-; Syntax error compiling at (.calva/output-window/output.calva-repl:130:1).
-; Unable to resolve symbol: halt in this context
-clj꞉ecommerce.clj.auth-utils꞉> 
-(integrant.repl/reset)
-:reloading (ecommerce.clj.model.products-model ecommerce.clj.model.users-model ecommerce.clj.auth-utils ecommerce.clj.controllers.user ecommerce.clj.controllers.products ecommerce.clj.handler ecommerce.clj.system user)
+clj꞉user꞉> 
+clj꞉user꞉> 
+; Jack-in done.
+clj꞉user꞉> (go)
 Exception: [SQLITE_ERROR] SQL error or missing database (table role already exists)
 Looks like the database is already setup?
 Exception: [SQLITE_ERROR] SQL error or missing database (table products already exists)
 Looks like the database is already setup?
-:resumedj
-clj꞉ecomKmerce.clj.auth-utils꞉> (integrant.repl/reset)
-:reloading (ecommerce.clj.controllers.user ecommerce.clj.handler ecommerce.clj.system user)
-Exception: [SQLITE_ERROR] SQL error or missing database (table role already exists)
-Looks like the database is already setup?
-Exception: [SQLITE_ERROR] SQL error or missing database (table products already exists)
-Looks like the database is already setup?
-:resumed
-clj꞉ecommerce.clj.auth-utils꞉> 
-(integrant.repl/reset)
-:reloading (ecommerce.clj.auth-utils ecommerce.clj.controllers.user ecommerce.clj.handler ecommerce.clj.system user)
-Exception: [SQLITE_ERROR] SQL error or missing database (table role already exists)
-Looks like the database is already setup?
-Exception: [SQLITE_ERROR] SQL error or missing database (table products already exists)
-Looks like the database is already setup?
-:resumed
-clj꞉ecommerce.clj.auth-utils꞉> (integrant.repl/reset)
-:reloading (ecommerce.clj.auth-utils ecommerce.clj.controllers.user ecommerce.clj.handler ecommerce.clj.system user)
-Exception: [SQLITE_ERROR] SQL error or missing database (table role already exists)
-Looks like the database is already setup?
-Exception: [SQLITE_ERROR] SQL error or missing database (table products already exists)
-Looks like the database is already setup?
-:resumed
-clj꞉ecommerce.clj.auth-utils꞉> 
-(integrant.repl/reset)
-:reloading (ecommerce.clj.handler ecommerce.clj.system user)
-Exception: [SQLITE_ERROR] SQL error or missing database (table role already exists)
-Looks like the database is already setup?
-Exception: [SQLITE_ERROR] SQL error or missing database (table products already exists)
-Looks like the database is already setup?
-:resumed
-clj꞉ecommerce.clj.auth-utils꞉> 
+:initiated
+clj꞉user꞉> 
+; nREPL Connection was closed
