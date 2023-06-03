@@ -18,8 +18,7 @@
    [reagent-mui.material.input-label :refer [input-label]]
    [reagent-mui.material.menu-item :refer [menu-item]]
    [reagent-mui.material.form-control :refer [form-control]]
-   [reagent-mui.material.select :refer [select]]
-   [ecommerce.cljs.login :as login-page]))
+   [reagent-mui.material.select :refer [select]]))
 
 (def ^:private roles
   "Different roles of users"
@@ -128,7 +127,7 @@
                 :variant :contained
                 :sx {:mt 3
                      :mb 2}
-                :on-click #(auth/login-user @user)}
+                :on-click #((auth/login-user @user))}
         "Sign In"]
        [grid {:container true}
         [grid {:item true}

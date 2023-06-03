@@ -37,5 +37,6 @@
          nil)]]]])
 
 (defn start-router!
+  "Start the router using provided routes"
   [routes]
   (router/router-start! routes))

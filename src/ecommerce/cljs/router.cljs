@@ -12,4 +12,4 @@
   (rfe/start!
    (rf/router routes {:data {:coercion rss/coercion}})
    (fn [m] (reset! page m))
-   {:use-fragment true}))
+   {:use-fragment false}))

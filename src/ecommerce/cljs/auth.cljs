@@ -26,12 +26,13 @@
 
 (defn auth-success!
   "Handler for success"
-  [{{:keys [token] :as user} :user}]
+  [{:keys [token user]}]
   ;; set token into local storage
   (set-auth-token token)
   (reset! auth-state user)
   (reset! error-state nil)
-  (.log js/console (clj->js user)))
+  (.log js/console (clj->js user))
+  (.replace (.-location js/window) "/home"))
 
 (defn auth-error!
   "Handler for errors"
