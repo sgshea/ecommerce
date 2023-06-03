@@ -12,6 +12,7 @@
 ;; Common functionality between staff and user pages
 ;; Abstracts routing and initialization
 
+;; Theming components
 ;; Set dark as default
 (defonce theme-mode
   (r/atom :dark)) 

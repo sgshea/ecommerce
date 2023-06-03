@@ -3,14 +3,18 @@
    [reagent.dom :as d]
 
    [ecommerce.cljs.products :as products]
+   [ecommerce.cljs.auth :refer [set-auth-state get-auth-state]]
 
    [ecommerce.cljs.common :refer [start-router! start-application]]))
 
 (defn home []
-  [:div "User home"])
+  [:div "User home"
+   [:div "Auth state: " (get-auth-state)]
+   [:button {:on-click #(set-auth-state)}
+    "Set auth state"]])
 
 (def routes
-  [["/"
+  [["/home"
     {:name ::home
      :view home}]
 

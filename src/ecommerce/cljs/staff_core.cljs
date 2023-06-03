@@ -11,7 +11,7 @@
   [:div "Staff home"])
 
 (def routes
-  [["/"
+  [["/staff"
     {:name ::home
      :view home}]
 

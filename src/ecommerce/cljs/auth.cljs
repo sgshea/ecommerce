@@ -1,7 +1,7 @@
 (ns ecommerce.cljs.auth
   (:require
    [reagent.core :as r]
-   [ajax.core :refer [POST]]))
+   [ajax.core :refer [GET POST]]))
 
 ;; Auth state
 (defonce auth-state (r/atom nil))
@@ -27,18 +27,34 @@
 (defn auth-success!
   "Handler for success"
   [{:keys [token user]}]
-  ;; set token into local storage
+  ;; set token into local storage and reset state with user
   (set-auth-token token)
-  (reset! auth-state user)
   (reset! error-state nil)
-  (.log js/console (clj->js user))
-  (.replace (.-location js/window) "/home"))
+  ;; redirect user to homepage for their role
+  (case (:role_id user)
+    1 (.assign (.-location js/window) "/home")
+    2 (.assign (.-location js/window) "/staff")
+    3 (.assign (.-location js/window) "/staff")
+    (.assign (.-location js/window) "/login")
+    ))
 
 (defn auth-error!
   "Handler for errors"
   [{{:keys [errors]} :response}]
   (reset! error-state errors)
   (.log js/console errors))
+
+(defn set-auth-state
+  "This uses token to get the user information, useful to use after changing page"
+  []
+  (GET "/api/me"
+    {:headers (get-auth-header)
+     :handler #(reset! auth-state (:user %))}))
+
+(defn get-auth-state
+  "This gets the user information from the atom"
+  []
+  @auth-state)
 
 (defn login-user [user]
   (POST "/api/login"

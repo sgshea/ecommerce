@@ -1,7 +1,6 @@
 (ns ecommerce.clj.model.users-model
   "Model for user and user related data"
   (:require [buddy.hashers :refer [check encrypt]]
-            [clojure.tools.logging :as log]
             [honey.sql :as hsql]
             [honey.sql.helpers :as hh]
             [next.jdbc :as jdbc]
@@ -85,19 +84,16 @@
                       hsql/format
                       (#(db-query-one db %)))
         sanitized-user (dissoc created-user :password)]
-    (log/info "user" sanitized-user)
     sanitized-user))
 
 (defn get-user-by-credientials
   [db {:keys [username password]}]
-  (log/info "login" username password)
   (let [user (-> (hh/select :*)
                  (hh/from :users)
                  (hh/where := :username username)
                  hsql/format
                  (#(db-query-one db %)))
         sanitized-user (dissoc user :password)]
-    (log/info "user" sanitized-user)
     (if (and user (check password (:password user)))
       sanitized-user
       nil)))
