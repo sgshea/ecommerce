@@ -69,3 +69,11 @@
      :params user
      :handler auth-success!
      :error-handler auth-error!}))
+
+(defn logout 
+  "Removes token, user-state, and redirects to login page"
+  []
+  (reset! auth-state nil)
+  (reset! error-state nil)
+  (set-auth-token "")
+  (.assign (.-location js/window) "/login"))

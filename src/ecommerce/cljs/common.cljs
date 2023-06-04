@@ -26,11 +26,11 @@
 
 (defn start-application 
   "Initialize application"
-  [pages]
+  [pages username]
    [:<>
     [styles/theme-provider (styles/create-theme (custom-theme @theme-mode))
      [css-baseline
-      [menu-bar/menu-bar theme-mode pages]
+      [menu-bar/menu-bar theme-mode pages username]
       [:div
        (if @router/page
          (let [view (:view (:data @router/page))]
