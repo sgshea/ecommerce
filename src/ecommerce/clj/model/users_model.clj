@@ -14,16 +14,16 @@
 
 (def ^:private roles
   "Different roles of users"
-  ["Customer" "Manager" "Staff"])
+  ["Customer" "Staff" "Manager"])
 
 (def ^:private initial-user-data
   "Create the database with this data."
-  [{:username "Sammy"
-    :password "password"
-    :email "sammy@sammyshea.com" :role_id 1}
-   {:username "John"
-    :password "1234"
-    :email "john@smith.com" :role_id 2}])
+  [{:username "sammy"
+    :password (encrypt "password")
+    :email "sammy@sammyshea.com" :role_id 2}
+   {:username "john"
+    :password (encrypt "1234")
+    :email "john@smith.com" :role_id 0}])
 
 (defn populate-users
   "Creates tables and auto-populates them with initial data"

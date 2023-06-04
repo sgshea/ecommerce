@@ -42,12 +42,12 @@
                :label "Role"
                :id "select-roles"
                :label-id "select-roles"}
-       [menu-item {:value 1}
+       [menu-item {:value 0}
         "Customer"]
+       [menu-item {:value 1}
+        "Staff"]
        [menu-item {:value 2}
-        "Manager"]
-       [menu-item {:value 3}
-        "Staff"]]]])
+        "Manager"]]]])
 
 (defn user-dialog
   "Form dialog to add a new user"
@@ -55,7 +55,7 @@
   (let [user-sign-up (r/atom {:username ""
                               :email ""
                               :password ""})
-        selected-role (r/atom 1)]
+        selected-role (r/atom 0)]
     (fn []
       [:div
        [dialog {:open @dialog-open?
@@ -129,12 +129,19 @@
                      :mb 2}
                 :on-click #((auth/login-user @user))}
         "Sign In"]
-       [grid {:container true}
+       [grid {:container true
+              :flex-direction :column}
         [grid {:item true}
          [link {:component :button
                 :variant :body1
                 :on-click #(reset! sign-up-dialog-open? true)}
-          "Sign up"]]]])))
+          "Sign up"]]
+        [grid {:item true
+               :mt 3}
+         [typography {:variant :overline
+                      :mb 1
+                      :color "#f44336"}
+          @auth/error-state]]]])))
 
 (defn login-page
   "Main function for login/signup page"

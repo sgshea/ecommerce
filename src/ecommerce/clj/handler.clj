@@ -14,7 +14,7 @@
             [ring.middleware.keyword-params :refer [wrap-keyword-params]]
             [clojure.java.io :as io]
             [ring.util.response :refer [response]]
-            [ecommerce.clj.auth-utils :refer [wrap-jwt-authentication auth-middleware is-user is-staff default-route]]
+            [ecommerce.clj.auth-utils :refer [wrap-jwt-authentication auth-middleware is-user is-staff is-manager default-route]]
             ))
 
 (defn login-handler
@@ -66,7 +66,8 @@
                         :handler users/login}}]
       ["/me" {:get {:middleware [wrap-jwt-authentication auth-middleware]
                     :handler users/me}}]
-      ["/users" {:get {:handler users/get-users}}]
+      ["/users" {:get {:middleware [wrap-jwt-authentication is-manager]
+                       :handler users/get-users}}]
       ["/users/:id" {:delete {:parameters {:path {:id int?}}
                               :handler users/delete-by-id}}]
       ["/products" {:get {:handler products/get-products}

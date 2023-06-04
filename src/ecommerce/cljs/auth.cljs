@@ -32,17 +32,17 @@
   (reset! error-state nil)
   ;; redirect user to homepage for their role
   (case (:role_id user)
-    1 (.assign (.-location js/window) "/home")
+    0 (.assign (.-location js/window) "/home")
+    1 (.assign (.-location js/window) "/staff")
     2 (.assign (.-location js/window) "/staff")
-    3 (.assign (.-location js/window) "/staff")
     (.assign (.-location js/window) "/login")
     ))
 
 (defn auth-error!
   "Handler for errors"
-  [{{:keys [errors]} :response}]
-  (reset! error-state errors)
-  (.log js/console errors))
+  [{{:keys [error]} :response}]
+  (reset! error-state error)
+  (.log js/console error))
 
 (defn set-auth-state
   "This uses token to get the user information, useful to use after changing page"

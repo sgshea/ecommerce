@@ -10,8 +10,8 @@
   []
   (let [auth-state (get-auth-state)
         role (case (js/parseInt (:role_id auth-state))
-               1 "customer"
-               3 "staff member"
+               0 "customer"
+               1 "staff member"
                2 "manager"
                "unidentified")]
     [grid {:mt 5

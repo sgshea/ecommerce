@@ -2,6 +2,7 @@
   (:require 
    [reagent.core :as r]
    [ajax.core :refer [GET PUT DELETE]]
+   [ecommerce.cljs.auth :refer [get-auth-header]]
    [reagent-mui.material.button :refer [button]]
    [reagent-mui.x.data-grid :refer [data-grid]]
    [reagent-mui.util :refer [clj->js']]
@@ -23,28 +24,31 @@
 
 (defonce selected-ids (r/atom []))
 
+(defonce error-message (r/atom ""))
+
 (defn handler [response]
   (.log js/console (str response)))
 
 (defn error-handler [{:keys [status status-text]}]
-  (.log js/console (str "something bad happened: " status " " status-text)))
+  (.log js/console (str "something bad happened: " status " " status-text))
+  (reset! error-message (str status-text ", Only managers can access user information.")))
 
 (defn get-users [users]
   (GET "/api/users"
-    {:headers {"Accept" "application/transit+json"}
+    {:headers (conj {"Accept" "application/transit+json"} (get-auth-header))
      :handler #(reset! users (flatten %))
      :error-handler error-handler}))
 
 (defn put-user [user]
   (PUT "/api/users"
-    {:headers {"Accept" "application/transit+json"}
+    {:headers (conj {"Accept" "application/transit+json"} (get-auth-header))
      :params user
      :handler handler
      :error-handler error-handler}))
 
 (defn delete-user [user]
   (DELETE (str "/api/users/" user)
-    {:headers {"Accept" "application/transit+json"}
+    {:headers (conj {"Accept" "application/transit+json"} (get-auth-header))
      :params {}
      :handler handler
      :error-handler error-handler}))
@@ -68,9 +72,9 @@
    :password (:password user)
    :email (:email user)
    :role_id (case (:role user)
-              "Customer" 1
-              "Manager" 2
-              "Staff" 3)))
+              "Customer" 0
+              "Staff" 1
+              "Manager" 2)))
 
 (defn rows-selection-handler
   "Updates the selected-ids atom with the ids of selected rows"
@@ -155,6 +159,10 @@
         [typography {:variant :h4
                      :mb 2}
          "Users List"]]
+       [grid {:item true}
+        [typography {:variant :h6
+                     :mb 2}
+         @error-message]]
        [grid {:item true}
         [data-grid-component (format-users-data @users) columns]]
        [grid {:mt 1
