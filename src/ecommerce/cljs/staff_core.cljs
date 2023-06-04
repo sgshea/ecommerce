@@ -6,8 +6,8 @@
    [ecommerce.cljs.common :refer [start-router! start-application]]
    [ecommerce.cljs.auth :refer [set-auth-state get-auth-state]]
    [ecommerce.cljs.components.home :as home]
-   [ecommerce.cljs.users :as users]
-   [ecommerce.cljs.products :as products]))
+   [ecommerce.cljs.components.users :as users]
+   [ecommerce.cljs.components.products-staff :refer [products-datagrid-staff]]))
 
 (def routes
   "Defines the routes for reitit"
@@ -20,7 +20,7 @@
      :view users/users-page}]
    ["/products"
     {:name ::products
-     :view products/products-page}]])
+     :view products-datagrid-staff}]])
 
 ;; pages defined for the application components (ex: menu bar)
 (def pages

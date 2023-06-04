@@ -1,24 +1,21 @@
-(ns ecommerce.cljs.products
-  (:require 
+(ns ecommerce.cljs.components.products-staff
+  "Components to allow staff to manage products"
+  (:require
    [reagent.core :as r]
-   [ajax.core :refer [GET POST PUT DELETE]]
-   [reagent-mui.material.button :refer [button]]
-   [reagent-mui.x.data-grid :refer [data-grid]]
-   [reagent-mui.util :refer [clj->js']]
+   [ajax.core :refer [GET POST DELETE]]
+   [ecommerce.cljs.components.products :refer [initialize-datagrid products selected-products]]
+   [reagent-mui.material.grid :refer [grid]]
+   [reagent-mui.material.typography :refer [typography]]
    [reagent-mui.icons.add :refer [add] :rename {add add-icon}]
+   [reagent-mui.material.text-field :refer [text-field]]
+   [reagent-mui.material.button :refer [button]]
    [reagent-mui.icons.delete :refer [delete] :rename {delete delete-icon}]
    [reagent-mui.icons.delete-forever :refer [delete-forever] :rename {delete-forever delete-forever-icon}]
-   [reagent-mui.material.text-field :refer [text-field]]
    [reagent-mui.material.dialog :refer [dialog]]
    [reagent-mui.material.dialog-actions :refer [dialog-actions]]
    [reagent-mui.material.dialog-content :refer [dialog-content]]
    [reagent-mui.material.dialog-content-text :refer [dialog-content-text]]
    [reagent-mui.material.dialog-title :refer [dialog-title]]))
-   
-
-(defonce products (r/atom nil))
-
-(defonce selected-products (r/atom []))
 
 (defn event-value
   [e]
@@ -33,19 +30,15 @@
 (defn get-products [products]
   (GET "/api/products"
     {:headers {"Accept" "application/transit+json"}
-     :handler #(reset! products (vec %))}))
+     :handler #(reset! products (vec %))
+     :error-handler error-handler}))
 
 (defn post-product [product]
   (POST "/api/products"
     {:headers {"Accept" "application/transit+json"}
      :params product
-     :handler handler}))
-
-(defn put-product [product]
-  (PUT "/api/products"
-    {:headers {"Accept" "application/transit+json"}
-     :params product
-     :handler handler}))
+     :handler handler
+     :error-handler error-handler}))
 
 (defn delete-product [product]
   (DELETE (str "/api/products/" product)
@@ -54,60 +47,7 @@
      :handler handler
      :error-handler error-handler}))
 
-(defn format-products-data 
-  "Formats the product data from a GET request to rows for the data-table"
-  [products]
-  (map #(hash-map :id (:products/id %)
-                  :name (:products/name %)
-                  :description (:products/description %)
-                  :category (:products/category %)
-                  :price (:products/price %)
-                  :quantity (:products/quantity %))
-       products))
-
-(defn rows-selection-handler
-  "Updates the selected-ids atom with the ids of selected rows"
-  [selection-model]
-  (reset! selected-products selection-model)
-  (.log js/console (str "Selected ids: " @selected-products)))
-
-(defn row-deletion-button
-  "Button to delete selected items, opens a confirmation dialog"
-  [dialog-open?]
-  [:div
-   [button {:variant :outlined
-            :on-click #(reset! dialog-open? true)
-            :start-icon (r/as-element [delete-icon])}
-    "Delete Selected Users"]
-   [dialog {:open @dialog-open?
-            :on-close #(reset! dialog-open? false)}
-    [dialog-title "Are you sure you want to delete these products"]
-    [dialog-content
-     [dialog-content-text
-      (str "Ids of products which will be deleted: " @selected-products)]
-     [dialog-actions
-      [button {:on-click #(reset! dialog-open? false)} "Go back"]
-      [button {:start-icon (r/as-element [delete-forever-icon])
-               :on-click #(do
-                            (reset! dialog-open? false)
-                            (doseq [product @selected-products]
-                              (delete-product product))
-                            (get-products products))} "Delete Products"]]]]])
-
-(defn row-update
-  "Updates a row, used for the datagrid"
-  [new]
-  (->
-   (js->clj new :keywordize-keys true)
-   (update :price js/parseFloat)
-   (put-product))
-  (get-products products)
-  new)
-
-(defn row-update-error [error]
-  (.log js/console (str error)))
-
-(defn product-dialog
+(defn row-addition-button-dialog
   "Form dialog to add a new product"
   [dialog-open?]
   (let [product (r/atom {:name ""
@@ -184,52 +124,53 @@
                               (reset! dialog-open? false)
                               (get-products products))} "Submit"]]]]]))
 
-(def columns [{:field :id
-               :headerName "ID"
-               :width 80}
-              {:field :name
-               :headerName "Name"
-               :width 100}
-              {:field :description
-               :headerName "Description"
-               :width 300
-               :editable true}
-              {:field :category
-               :headerName "Category"
-               :width 130}
-              {:field :price
-               :headerName "Price"
-               :width 80
-               :editable true}
-              {:field :quantity
-               :headerName "Quantity"
-               :width 150
-               :editable true}])
+(defn row-deletion-button
+  "Button to delete selected items, opens a confirmation dialog"
+  [dialog-open?]
+  [:div
+   [button {:variant :outlined
+            :on-click #(reset! dialog-open? true)
+            :start-icon (r/as-element [delete-icon])}
+    "Delete Selected Products"]
+   [dialog {:open @dialog-open?
+            :on-close #(reset! dialog-open? false)}
+    [dialog-title "Are you sure you want to delete these products"]
+    [dialog-content
+     [dialog-content-text
+      (str "Ids of products which will be deleted: " @selected-products)]
+     [dialog-actions
+      [button {:on-click #(reset! dialog-open? false)} "Go back"]
+      [button {:start-icon (r/as-element [delete-forever-icon])
+               :on-click #(do
+                            (reset! dialog-open? false)
+                            (doseq [product @selected-products]
+                              (delete-product product))
+                            (get-products products))} "Delete Products"]]]]])
 
-(defn data-grid-component [rows col]
-  [:div {:style {:height 400 :width "100%"}}
-   [data-grid {:rows rows
-               :columns col
-               :auto-height true
-               :initial-state (clj->js' {:pagination {:pagination-model {:page-size 5}}})
-               :page-size-options [5]
-               :checkbox-selection true
-               :disable-row-selection-on-click true
-               :density :standard
-               :process-row-update row-update
-               :on-process-row-update-error row-update-error
-               :on-row-selection-model-change rows-selection-handler
-               }]])
-
-(defn products-page 
-  "Main function defining products page"
+(defn products-datagrid-staff
+  "Staff member version of datagrid component, allowing product addition, deletion, and updating"
   []
-  (let [add-product-dialog (r/atom false)
-        remove-product-dialog (r/atom false)]
+  (let [addition-dialog-open? (r/atom false)
+        deletion-dialog-open? (r/atom false)]
     (get-products products)
-    (fn []
-      [:div
-       [:h3 "Products List"]
-       [data-grid-component (format-products-data @products) columns]
-       [product-dialog add-product-dialog]
-       [row-deletion-button remove-product-dialog]])))
+    [grid {:m 6
+           :container true
+           :spacing 1
+           :justify-content "center"
+           :align-items "center"
+           :direction "column"}
+     [grid {:item true}
+      [typography {:variant :h4
+                   :mb 2}
+       "Products List"]]
+     [grid {:item true
+            :xs 4}
+      [initialize-datagrid true]]
+     [grid {:mt 1
+            :container true
+            :item true
+            :justify-content "center"}
+      [grid {:item true}
+       [row-addition-button-dialog addition-dialog-open?]]
+      [grid {:item true}
+       [row-deletion-button deletion-dialog-open?]]]]))

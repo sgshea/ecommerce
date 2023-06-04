@@ -11,10 +11,11 @@
   (let [auth-state (get-auth-state)
         role (case (js/parseInt (:role_id auth-state))
                1 "customer"
-               2 "staff member"
-               3 "manager"
+               3 "staff member"
+               2 "manager"
                "unidentified")]
-    [grid {:container true
+    [grid {:mt 5
+           :container true
            :justify-content "center"}
      [typography {:variant :h3}
       "Welcome back " role " " (:username auth-state)]]))

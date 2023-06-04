@@ -5,7 +5,7 @@
 
    [ecommerce.cljs.common :refer [start-router! start-application]]
    [ecommerce.cljs.auth :refer [set-auth-state get-auth-state]]
-   [ecommerce.cljs.products :as products]
+   [ecommerce.cljs.components.products :refer [products-datagrid]]
    [ecommerce.cljs.components.home :as home]))
 
 (def routes
@@ -16,7 +16,7 @@
 
    ["/products"
     {:name ::products
-     :view products/products-page}]])
+     :view products-datagrid}]])
 
 ;; pages defined for the application components (ex: menu bar)
 (def pages

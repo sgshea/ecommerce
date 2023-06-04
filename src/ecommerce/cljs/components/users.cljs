@@ -1,24 +1,19 @@
-(ns ecommerce.cljs.users
+(ns ecommerce.cljs.components.users
   (:require 
    [reagent.core :as r]
-   [ajax.core :refer [GET POST PUT DELETE]]
+   [ajax.core :refer [GET PUT DELETE]]
    [reagent-mui.material.button :refer [button]]
    [reagent-mui.x.data-grid :refer [data-grid]]
    [reagent-mui.util :refer [clj->js']]
-   [reagent-mui.icons.add :refer [add] :rename {add add-icon}]
+   [reagent-mui.material.grid :refer [grid]]
+   [reagent-mui.material.typography :refer [typography]]
    [reagent-mui.icons.delete :refer [delete] :rename {delete delete-icon}]
    [reagent-mui.icons.delete-forever :refer [delete-forever] :rename {delete-forever delete-forever-icon}]
-   [reagent-mui.material.box :refer [box]]
-   [reagent-mui.material.text-field :refer [text-field]]
    [reagent-mui.material.dialog :refer [dialog]]
    [reagent-mui.material.dialog-actions :refer [dialog-actions]]
    [reagent-mui.material.dialog-content :refer [dialog-content]]
    [reagent-mui.material.dialog-content-text :refer [dialog-content-text]]
-   [reagent-mui.material.dialog-title :refer [dialog-title]]
-   [reagent-mui.material.input-label :refer [input-label]]
-   [reagent-mui.material.menu-item :refer [menu-item]]
-   [reagent-mui.material.form-control :refer [form-control]]
-   [reagent-mui.material.select :refer [select]]))
+   [reagent-mui.material.dialog-title :refer [dialog-title]]))
    
 (def ^:private roles
   "Different roles of users"
@@ -27,10 +22,6 @@
 (defonce users (r/atom nil))
 
 (defonce selected-ids (r/atom []))
-
-(defn event-value
-  [e]
-  (.. e -target -value))
 
 (defn handler [response]
   (.log js/console (str response)))
@@ -41,19 +32,15 @@
 (defn get-users [users]
   (GET "/api/users"
     {:headers {"Accept" "application/transit+json"}
-     :handler #(reset! users (vec %))}))
-
-(defn post-user [user]
-  (POST "/api/users"
-    {:headers {"Accept" "application/transit+json"}
-     :params user
-     :handler handler}))
+     :handler #(reset! users (flatten %))
+     :error-handler error-handler}))
 
 (defn put-user [user]
   (PUT "/api/users"
     {:headers {"Accept" "application/transit+json"}
      :params user
-     :handler handler}))
+     :handler handler
+     :error-handler error-handler}))
 
 (defn delete-user [user]
   (DELETE (str "/api/users/" user)
@@ -140,26 +127,39 @@
                :editable true}])
 
 (defn data-grid-component [rows col]
-  [:div {:style {:height 400 :width 800}}
-   [data-grid {:rows rows
-               :columns col
-               :initial-state (clj->js' {:pagination {:pagination-model {:page-size 5}}})
-               :page-size-options [5]
-               :checkbox-selection true
-               :disable-row-selection-on-click true
-               :density :standard
-               :process-row-update row-update
-               :on-process-row-update-error row-update-error
-               :on-row-selection-model-change rows-selection-handler
-               }]])
+  [data-grid {:rows rows
+              :columns col
+              :auto-height true
+              :initial-state (clj->js' {:pagination {:pagination-model {:page-size 5}}})
+              :page-size-options [5]
+              :checkbox-selection true
+              :disable-row-selection-on-click true
+              :density :standard
+              :process-row-update row-update
+              :on-process-row-update-error row-update-error
+              :on-row-selection-model-change rows-selection-handler}])
 
-(defn users-page 
+(defn users-page
   "Main function defining users page"
   []
-  (let [remove-user-dialog (r/atom false)]
-    (get-users users)
-    (fn []
-      [:div
-       [:h3 "Users List"]
-       [data-grid-component (format-users-data @users) columns]
-       [row-deletion-button remove-user-dialog]])))
+  (get-users users)
+  (fn []
+    (let [remove-user-dialog-open? (r/atom false)]
+      [grid {:m 6
+             :container true
+             :spacing 1
+             :justify-content "center"
+             :align-items "center"
+             :direction "column"}
+       [grid {:item true}
+        [typography {:variant :h4
+                     :mb 2}
+         "Users List"]]
+       [grid {:item true}
+        [data-grid-component (format-users-data @users) columns]]
+       [grid {:mt 1
+              :container true
+              :item true
+              :justify-content "center"}
+        [grid {:item true}
+         [row-deletion-button remove-user-dialog-open?]]]])))
