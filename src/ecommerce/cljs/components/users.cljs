@@ -1,7 +1,7 @@
 (ns ecommerce.cljs.components.users
   (:require 
    [reagent.core :as r]
-   [ajax.core :refer [GET PUT DELETE]]
+   [ajax.core :refer [GET DELETE]]
    [ecommerce.cljs.auth :refer [get-auth-header]]
    [reagent-mui.material.button :refer [button]]
    [reagent-mui.x.data-grid :refer [data-grid]]
@@ -18,16 +18,13 @@
    
 (def ^:private roles
   "Different roles of users"
-  ["Customer" "Manager" "Staff"])
+  ["Customer" "Staff" "Manager"])
 
 (defonce users (r/atom nil))
 
 (defonce selected-ids (r/atom []))
 
 (defonce error-message (r/atom ""))
-
-(defn handler [response]
-  (.log js/console (str response)))
 
 (defn error-handler [{:keys [status status-text]}]
   (.log js/console (str "something bad happened: " status " " status-text))
@@ -39,18 +36,11 @@
      :handler #(reset! users (flatten %))
      :error-handler error-handler}))
 
-(defn put-user [user]
-  (PUT "/api/users"
-    {:headers (conj {"Accept" "application/transit+json"} (get-auth-header))
-     :params user
-     :handler handler
-     :error-handler error-handler}))
-
 (defn delete-user [user]
   (DELETE (str "/api/users/" user)
     {:headers (conj {"Accept" "application/transit+json"} (get-auth-header))
      :params {}
-     :handler handler
+     :handler #(.log js/console (str "Deleted user " (clj->js user)))
      :error-handler error-handler}))
 
 (defn format-users-data 
@@ -62,19 +52,6 @@
                   :email (:users/email %)
                   :role (get roles (:users/role_id %)))
        users))
-
-(defn format-user-data-back 
-  "Formats a single user back into the format for a POST or PUT request"
-  [user]
-  (hash-map
-   :id (:id user)
-   :username (:username user)
-   :password (:password user)
-   :email (:email user)
-   :role_id (case (:role user)
-              "Customer" 0
-              "Staff" 1
-              "Manager" 2)))
 
 (defn rows-selection-handler
   "Updates the selected-ids atom with the ids of selected rows"
@@ -105,16 +82,6 @@
                               (delete-user user))
                             (get-users users))} "Delete Users"]]]]])
 
-(defn row-update
-  "Updates a row, used for the datagrid"
-  [new]
-  (put-user (format-user-data-back (js->clj new :keywordize-keys true)))
-  (get-users users)
-  new)
-
-(defn row-update-error [error]
-  (.log js/console (str error)))
-
 (def columns [{:field :id
                :headerName "ID"
                :width 80}
@@ -123,12 +90,10 @@
                :width 130}
               {:field :email
                :headerName "Email"
-               :width 200
-               :editable true}
+               :width 200}
               {:field :role
                :headerName "Role"
-               :width 150
-               :editable true}])
+               :width 150}])
 
 (defn data-grid-component [rows col]
   [data-grid {:rows rows
@@ -139,8 +104,6 @@
               :checkbox-selection true
               :disable-row-selection-on-click true
               :density :standard
-              :process-row-update row-update
-              :on-process-row-update-error row-update-error
               :on-row-selection-model-change rows-selection-handler}])
 
 (defn users-page

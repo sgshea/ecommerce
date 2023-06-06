@@ -3,6 +3,7 @@
   (:require
    [reagent.core :as r]
    [ajax.core :refer [GET POST DELETE]]
+   [ecommerce.cljs.auth :refer [get-auth-header]]
    [ecommerce.cljs.components.products :refer [initialize-datagrid products selected-products]]
    [reagent-mui.material.grid :refer [grid]]
    [reagent-mui.material.typography :refer [typography]]
@@ -21,108 +22,105 @@
   [e]
   (.. e -target -value))
 
-(defn handler [response]
-  (.log js/console (str response)))
-
 (defn error-handler [{:keys [status status-text]}]
   (.log js/console (str "something bad happened: " status " " status-text)))
 
 (defn get-products [products]
   (GET "/api/products"
-    {:headers {"Accept" "application/transit+json"}
+    {:headers (conj {"Accept" "application/transit+json"} (get-auth-header))
      :handler #(reset! products (vec %))
      :error-handler error-handler}))
 
 (defn post-product [product]
   (POST "/api/products"
-    {:headers {"Accept" "application/transit+json"}
+    {:headers (conj {"Accept" "application/transit+json"} (get-auth-header))
      :params product
-     :handler handler
+     :handler #(.log js/console "Added product: " (clj->js product))
      :error-handler error-handler}))
 
 (defn delete-product [product]
   (DELETE (str "/api/products/" product)
-    {:headers {"Accept" "application/transit+json"}
+    {:headers (conj {"Accept" "application/transit+json"} (get-auth-header))
      :params {}
-     :handler handler
+     :handler #(.log js/console "Deleted product: " product)
      :error-handler error-handler}))
 
 (defn row-addition-button-dialog
   "Form dialog to add a new product"
   [dialog-open?]
-  (let [product (r/atom {:name ""
-                         :description ""
-                         :category ""
-                         :price 0
-                         :quantity 0})]
-    [:div
+  [:div
      [button {:variant :outlined
               :on-click #(reset! dialog-open? true)
               :start-icon (r/as-element [add-icon])}
       "Add New Product"]
      [dialog {:open @dialog-open?
               :on-close #(reset! dialog-open? false)}
-      [dialog-title "Add New Product"]
-      [dialog-content
-       [dialog-content-text
-        "To add a new product, please enter a name, description, category, price, and initial amount."]
-       [text-field {:auto-focus true
-                    :margin :dense
-                    :id :name-field
-                    :label "Product Name"
-                    :on-change (fn [e]
-                                 (swap! product assoc-in [:name] (event-value e)))
-                    :type :text
-                    :full-width true
-                    :variant :standard}]
-       [text-field {:auto-focus false
-                    :multiline true
-                    :margin :dense
-                    :id :description-field
-                    :label "Product Description"
-                    :on-change (fn [e]
-                                 (swap! product assoc-in [:description] (event-value e)))
-                    :type :text
-                    :full-width true
-                    :variant :standard}]
-       [text-field {:auto-focus false
-                    :margin :dense
-                    :id :category-field
-                    :label "Category"
-                    :on-change (fn [e]
-                                 (swap! product assoc-in [:category] (event-value e)))
-                    :type :text
-                    :full-width true
-                    :variant :standard}]
-       [text-field {:auto-focus false
-                    :margin :dense
-                    :id :price-field
-                    :label "Price"
-                    :on-change (fn [e]
-                                 (swap! product assoc-in [:price] (js/parseFloat (event-value e))))
-                    :type :number
-                    :full-width false
-                    :variant :standard}]
-       [text-field {:auto-focus false
-                    :margin :dense
-                    :id :price-field
-                    :label "Initial Quantity"
-                    :on-change (fn [e]
-                                 (swap! product assoc-in [:quantity] (js/parseInt (event-value e))))
-                    :type :number
-                    :full-width false
-                    :variant :standard}]
-       [dialog-actions
-        [button {:on-click #(reset! dialog-open? false)} "Close"]
-        [button {:on-click #(do
-                              (post-product @product)
-                              (reset! product {:name ""
-                                               :description ""
-                                               :category ""
-                                               :price 0
-                                               :quantity 0})
-                              (reset! dialog-open? false)
-                              (get-products products))} "Submit"]]]]]))
+      (let [product (r/atom {:name ""
+                             :description ""
+                             :category ""
+                             :price 0
+                             :quantity 0})]
+        [dialog-title "Add New Product"]
+        [dialog-content
+         [dialog-content-text
+          "To add a new product, please enter a name, description, category, price, and initial amount."]
+         [text-field {:auto-focus true
+                      :margin :dense
+                      :id :name-field
+                      :label "Product Name"
+                      :on-change (fn [e]
+                                   (swap! product assoc-in [:name] (event-value e)))
+                      :type :text
+                      :full-width true
+                      :variant :standard}]
+         [text-field {:auto-focus false
+                      :multiline true
+                      :margin :dense
+                      :id :description-field
+                      :label "Product Description"
+                      :on-change (fn [e]
+                                   (swap! product assoc-in [:description] (event-value e)))
+                      :type :text
+                      :full-width true
+                      :variant :standard}]
+         [text-field {:auto-focus false
+                      :margin :dense
+                      :id :category-field
+                      :label "Category"
+                      :on-change (fn [e]
+                                   (swap! product assoc-in [:category] (event-value e)))
+                      :type :text
+                      :full-width true
+                      :variant :standard}]
+         [text-field {:auto-focus false
+                      :margin :dense
+                      :id :price-field
+                      :label "Price"
+                      :on-change (fn [e]
+                                   (swap! product assoc-in [:price] (js/parseFloat (event-value e))))
+                      :type :number
+                      :full-width false
+                      :variant :standard}]
+         [text-field {:auto-focus false
+                      :margin :dense
+                      :id :price-field
+                      :label "Initial Quantity"
+                      :on-change (fn [e]
+                                   (swap! product assoc-in [:quantity] (js/parseInt (event-value e))))
+                      :type :number
+                      :full-width false
+                      :variant :standard}]
+         [dialog-actions
+          [button {:on-click #(reset! dialog-open? false)} "Close"]
+          [button {:on-click #(do
+                                (reset! dialog-open? false)
+                                (post-product @product)
+                                (reset! product {:name ""
+                                                 :description ""
+                                                 :category ""
+                                                 :price 0
+                                                 :quantity 0})
+                                (get-products products))} "Submit"]]])]])
 
 (defn row-deletion-button
   "Button to delete selected items, opens a confirmation dialog"
@@ -163,6 +161,10 @@
       [typography {:variant :h4
                    :mb 2}
        "Products List"]]
+     [grid {:item true}
+      [typography {:variant :body1
+                   :mb 2}
+       "Staff are able to add, delete and update products. To update products, click inside the price, quantity, or description."]]
      [grid {:item true
             :xs 4}
       [initialize-datagrid true]]

@@ -68,23 +68,28 @@
                     :handler users/me}}]
       ["/users" {:get {:middleware [wrap-jwt-authentication is-manager]
                        :handler users/get-users}}]
-      ["/users/:id" {:delete {:parameters {:path {:id int?}}
+      ["/users/:id" {:delete {:middleware [wrap-jwt-authentication is-manager]
+                              :parameters {:path {:id int?}}
                               :handler users/delete-by-id}}]
-      ["/products" {:get {:handler products/get-products}
-                    :post {:parameters {:body {:name string?
+      ["/products" {:get {:middleware [wrap-jwt-authentication auth-middleware]
+                          :handler products/get-products}
+                    :post {:middleware [wrap-jwt-authentication is-staff]
+                           :parameters {:body {:name string?
                                                :description string?
                                                :category string?
                                                :price number?
                                                :quantity int?}}
                            :handler products/save-new}
-                    :put {:parameters {:body {:id int?
+                    :put {:middleware [wrap-jwt-authentication is-staff]
+                          :parameters {:body {:id int?
                                               :name string?
                                               :description string?
                                               :category string?
                                               :price number?
                                               :quantity int?}}
                           :handler products/edit}}]
-      ["/products/:id" {:delete {:parameters {:path {:id int?}}
+      ["/products/:id" {:delete {:middleware [wrap-jwt-authentication is-staff]
+                                 :parameters {:path {:id int?}}
                                  :handler products/delete-by-id}}]]]
     {:data {:db db
             :coercion reitit.coercion.spec/coercion

@@ -58,8 +58,8 @@
     (if (and
          (authenticated? request)
            (case (return-user-id request)
+             1 true
              2 true
-             3 true
              false))
       (handler request)
       {:status 401 :body {:error "Unauthorized"}})))

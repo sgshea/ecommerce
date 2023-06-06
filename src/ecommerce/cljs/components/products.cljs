@@ -3,6 +3,7 @@
   (:require
    [reagent.core :as r]
    [ajax.core :refer [GET PUT]]
+   [ecommerce.cljs.auth :refer [get-auth-header]]
    [reagent-mui.x.data-grid :refer [data-grid]]
    [reagent-mui.material.grid :refer [grid]]
    [reagent-mui.material.typography :refer [typography]]
@@ -12,23 +13,20 @@
 
 (defonce selected-products (r/atom nil))
 
-(defn handler [response]
-  (.log js/console (str response)))
-
 (defn error-handler [{:keys [status status-text]}]
   (.log js/console (str "something bad happened: " status " " status-text)))
 
 (defn get-products [products]
   (GET "/api/products"
-    {:headers {"Accept" "application/transit+json"}
+    {:headers (conj {"Accept" "application/transit+json"} (get-auth-header))
      :handler #(reset! products (vec %))
      :error-handler error-handler}))
 
 (defn put-product [product]
   (PUT "/api/products"
-    {:headers {"Accept" "application/transit+json"}
+    {:headers (conj {"Accept" "application/transit+json"} (get-auth-header))
      :params product
-     :handler handler
+     :handler #(.log js/console (str "Updated product " product))
      :error-handler error-handler}))
 
 (defn format-products-data
@@ -54,6 +52,7 @@
   (->
    (js->clj new :keywordize-keys true)
    (update :price js/parseFloat)
+   (update :quantity js/parseInt)
    (put-product))
   (get-products products)
   new)
@@ -91,11 +90,11 @@
       {:rows rows
        :columns col
        :auto-height true
-       :initial-state (clj->js' {:pagination {:pagination-model {:page-size 5}}})
-       :page-size-options [5]
+       :initial-state (clj->js' {:pagination {:pagination-model {:page-size 25}}})
+       :page-size-options [25]
        :checkbox-selection true
        :disable-row-selection-on-click true
-       :density :standard}
+       :density :compact}
      staff?
      (conj {:process-row-update row-update
             :on-process-row-update-error row-update-error
