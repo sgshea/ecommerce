@@ -1,9 +1,9 @@
 (ns ecommerce.clj.model.orders-model
   "Model for orders and order details"
-  (:require
-   [honey.sql :as hsql]
-   [next.jdbc :as jdbc]
-   [next.jdbc.sql :as sql]))
+  (:require [clojure.tools.logging :as log]
+            [honey.sql :as hsql]
+            [next.jdbc :as jdbc]
+            [next.jdbc.sql :as sql]))
 
 (def ^:private initial-order-data
   [{:user_id 1}
@@ -58,7 +58,7 @@
         (println "Looks like the database is already setup?"))))
 
 (defn get-orders
-  "Get all orders, joining the username of the user"
+  "Get all orders"
   [db]
   (let [init-query
         (sql/query db
@@ -80,14 +80,45 @@
                                     :order_details/order_id) init-query)]
     cleaned-query))
 
+(defn get-orders-for-customer
+  "Get orders for a single customer"
+  [db id]
+  (let [init-query
+        (sql/query db
+                   (hsql/format {:select [:o.*
+                                          :od.*
+                                          :u.id :u.username
+                                          :p.id :p.name :p.price]
+                                 :from [[:orders :o]]
+                                 :where [:= :o.user_id id]
+                                 :join-by [:left [[:users :u]
+                                                  [:= :o.user_id :u.id]]
+                                           :join [[:order_details :od]
+                                                  [:= :o.id :od.order_id]]
+                                           :left [[:products :p]
+                                                  [:= :od.product_id :p.id]]]}))
+        cleaned-query (map #(dissoc %
+                                    ;; remove these keys
+                                    :orders/user_id :users/id
+                                    :order_details/product_id :products/id
+                                    :order_details/order_id) init-query)]
+    cleaned-query))
+
 (defn add-order
   "Adds a new order and corresponding order_details"
-  [db {:keys [user_id details_array]}]
-  (let [order_id (sql/insert! db :orders {:user_id user_id})]
-    (map #((-> %
-               (conj {:order_id order_id})
-               (sql/insert! db :order_details)))
-         details_array)))
+  [db params user-id]
+  (let [order_id (first (vals (sql/insert! db :orders {:user_id user-id})))
+        details_vector (seq params)]
+    ;; Subtract quantities
+    (doseq [[product-id quantity] details_vector]
+      (sql/query db
+                 (hsql/format {:update :products
+                               :set {:quantity [:- :quantity quantity]}
+                               :where [:= :id product-id]})))
+    ;; Add orders
+    (sql/query db
+               (hsql/format {:insert-into [:order_details [:product_id :quantity :order_id]]
+                             :values (vec (map #(vec (conj % order_id)) details_vector))}))))
 
 (defn delete-order-by-id
   "Deletes a order given an id

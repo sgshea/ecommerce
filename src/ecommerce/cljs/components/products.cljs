@@ -117,11 +117,11 @@
            :justify-content "center"
            :direction "column"}
      [grid {:item true
-            :mb 2
             :xs 12}
       [typography {:variant :h4}
        "Products List"]]
      [grid {:item true}
       [initialize-datagrid false]]
-     [grid {:item true}
+     [grid {:item true
+            :mt 2}
       [order-products-button-dialog order-dialog-open? products selected-products]]]))

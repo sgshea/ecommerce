@@ -92,8 +92,10 @@
       ["/products/:id" {:delete {:middleware [wrap-jwt-authentication is-staff]
                                  :parameters {:path {:id int?}}
                                  :handler products/delete-by-id}}]
-      ["/orders" {:get {:handler orders/get-orders}
-                  :post {:handler orders/save-new}}]
+      ["/orders" {:get {:middleware [wrap-jwt-authentication auth-middleware]
+                        :handler orders/get-orders}
+                  :post {:middleware [wrap-jwt-authentication auth-middleware]
+                         :handler orders/save-new}}]
       ["/orders/:id" {:delete {:middleware [wrap-jwt-authentication is-staff]
                                :parameters {:path {:id int?}}
                                :handler orders/delete-by-id}}]]]

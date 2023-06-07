@@ -63,6 +63,7 @@
         [dialog-title "Sign up new account"]
         [dialog-content
          [text-field {:auto-focus true
+                      :required true
                       :margin :dense
                       :label "Username"
                       :on-change (fn [e]
@@ -71,6 +72,7 @@
                       :full-width true
                       :variant :standard}]
          [text-field {:auto-focus false
+                      :required true
                       :margin :dense
                       :label "Email"
                       :on-change (fn [e]
@@ -79,6 +81,7 @@
                       :full-width true
                       :variant :standard}]
          [text-field {:auto-focus false
+                      :required true
                       :margin :dense
                       :label "Password"
                       :on-change (fn [e]
@@ -120,7 +123,7 @@
                     :label "Password"
                     :on-change (fn [e]
                                  (swap! user assoc-in [:password] (event-value e)))
-                    :type :email
+                    :type :password
                     :full-width true
                     :variant :standard}]
        [button {:full-width true

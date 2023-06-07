@@ -43,7 +43,11 @@
                 :margin :dense
                 :label (str "Quantity for " (:products/name product))
                 :on-change (fn [e]
-                             (swap! new-order assoc id (js/parseInt (event-value e))))
+                             ;; check for NaN, if so remove from map
+                             (let [num (js/parseInt (event-value e))]
+                               (if (js/isNaN num)
+                                 (swap! new-order dissoc id)
+                                 (swap! new-order assoc id num))))
                 :type :number
                 :full-width false
                 :variant :standard}]])
@@ -64,8 +68,6 @@
         [dialog-content
          [dialog-content-text
           "Add an order amount for each item selected."]
-         [dialog-content-text
-          (str "Current order: " (str @new-order))]
          [grid {:container true}
           (map (fn [id]
                  (quantity-selector (get zip-products id) id)) @selected-products)]
@@ -73,7 +75,6 @@
           [button {:on-click #(reset! dialog-open? false)} "Close"]
           [button {:on-click #(do
                                 (reset! dialog-open? false)
-                                (swap! new-order assoc :user_id (:id auth-state))
                                 (post-order @new-order)
                                 (reset! new-order {})
                                 (orders/get-orders orders/orders))} "Submit"]]]]]))
