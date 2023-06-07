@@ -11,10 +11,11 @@
             [muuntaja.core :as m]
             [ecommerce.clj.controllers.user :as users]
             [ecommerce.clj.controllers.products :as products]
+            [ecommerce.clj.controllers.orders :as orders]
             [ring.middleware.keyword-params :refer [wrap-keyword-params]]
             [clojure.java.io :as io]
             [ring.util.response :refer [response]]
-            [ecommerce.clj.auth-utils :refer [wrap-jwt-authentication auth-middleware is-user is-staff is-manager default-route]]
+            [ecommerce.clj.auth-utils :refer [wrap-jwt-authentication auth-middleware is-staff is-manager default-route]]
             ))
 
 (defn login-handler
@@ -60,7 +61,7 @@
                                                :password string?
                                                :email string?
                                                :role_id int?}}
-                        :handler users/register}}]
+                           :handler users/register}}]
       ["/login" {:post {:parameters {:body {:username string?
                                             :password string?}}
                         :handler users/login}}]
@@ -90,7 +91,12 @@
                           :handler products/edit}}]
       ["/products/:id" {:delete {:middleware [wrap-jwt-authentication is-staff]
                                  :parameters {:path {:id int?}}
-                                 :handler products/delete-by-id}}]]]
+                                 :handler products/delete-by-id}}]
+      ["/orders" {:get {:handler orders/get-orders}
+                  :post {:handler orders/save-new}}]
+      ["/orders/:id" {:delete {:middleware [wrap-jwt-authentication is-staff]
+                               :parameters {:path {:id int?}}
+                               :handler orders/delete-by-id}}]]]
     {:data {:db db
             :coercion reitit.coercion.spec/coercion
             :muuntaja m/instance

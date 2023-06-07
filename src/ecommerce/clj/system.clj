@@ -4,7 +4,8 @@
             [ring.adapter.jetty :refer [run-jetty]]
             [ecommerce.clj.handler :as handler]
             [ecommerce.clj.model.users-model :refer [populate-users]]
-            [ecommerce.clj.model.products-model :refer [populate-products]])
+            [ecommerce.clj.model.products-model :refer [populate-products]]
+            [ecommerce.clj.model.orders-model :refer [populate-orders]])
   (:gen-class))
 
 (def config
@@ -22,6 +23,7 @@
   (let [conn (jdbc/get-datasource db-spec)]
     (populate-users conn)
     (populate-products conn)
+    (populate-orders conn)
     conn))
 
 (defmethod ig/halt-key! :adapter/jetty [_ server]

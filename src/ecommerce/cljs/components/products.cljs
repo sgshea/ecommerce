@@ -4,6 +4,7 @@
    [reagent.core :as r]
    [ajax.core :refer [GET PUT]]
    [ecommerce.cljs.auth :refer [get-auth-header]]
+   [ecommerce.cljs.components.order-products :refer [order-products-button-dialog]]
    [reagent-mui.x.data-grid :refer [data-grid]]
    [reagent-mui.material.grid :refer [grid]]
    [reagent-mui.material.typography :refer [typography]]
@@ -94,11 +95,11 @@
        :page-size-options [25]
        :checkbox-selection true
        :disable-row-selection-on-click true
-       :density :compact}
+       :density :compact
+       :on-row-selection-model-change rows-selection-handler}
      staff?
      (conj {:process-row-update row-update
-            :on-process-row-update-error row-update-error
-            :on-row-selection-model-change rows-selection-handler}))])
+            :on-process-row-update-error row-update-error}))])
 
 (defn initialize-datagrid
   "Helper function"
@@ -108,16 +109,19 @@
 (defn products-datagrid
   "Main function defining products datagrid"
   []
-  (get-products products)
-  [grid {:mt 5
-         :container true
-         :align-items "center"
-         :justify-content "center"
-         :direction "column"}
-   [grid {:item true
-          :mb 2
-          :xs 12}
-    [typography {:variant :h4}
-    "Products List"]]
-   [grid {:item true}
-    [initialize-datagrid false]]])
+  (let [order-dialog-open? (r/atom false)]
+    (get-products products)
+    [grid {:mt 5
+           :container true
+           :align-items "center"
+           :justify-content "center"
+           :direction "column"}
+     [grid {:item true
+            :mb 2
+            :xs 12}
+      [typography {:variant :h4}
+       "Products List"]]
+     [grid {:item true}
+      [initialize-datagrid false]]
+     [grid {:item true}
+      [order-products-button-dialog order-dialog-open? products selected-products]]]))

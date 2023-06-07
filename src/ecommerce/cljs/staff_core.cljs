@@ -7,6 +7,7 @@
    [ecommerce.cljs.auth :refer [set-auth-state get-auth-state]]
    [ecommerce.cljs.components.home :as home]
    [ecommerce.cljs.components.users :as users]
+   [ecommerce.cljs.components.orders-staff :refer [orders-datagrid-staff]]
    [ecommerce.cljs.components.products-staff :refer [products-datagrid-staff]]))
 
 (def routes
@@ -15,22 +16,27 @@
     {:name ::home
      :view home/homepage}]
 
-   ["/users"
-    {:name ::users
-     :view users/users-page}]
+   ["/orders"
+    {:name ::orders
+     :view orders-datagrid-staff}]
    ["/products"
     {:name ::products
-     :view products-datagrid-staff}]])
+     :view products-datagrid-staff}]
+   ["/users"
+    {:name ::users
+     :view users/users-page}]])
 
 ;; pages defined for the application components (ex: menu bar)
 (def pages
   "Defines the pages to use in components"
   [{:name "Home"
     :link ::home}
-   {:name "Users"
-    :link ::users}
+   {:name "Orders"
+    :link ::orders}
    {:name "Products"
-    :link ::products}])
+    :link ::products}
+   {:name "Users"
+    :link ::users}])
 
 ;; -------------------------
 ;; Initialize app

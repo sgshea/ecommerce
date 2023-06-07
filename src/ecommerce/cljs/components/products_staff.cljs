@@ -5,6 +5,7 @@
    [ajax.core :refer [GET POST DELETE]]
    [ecommerce.cljs.auth :refer [get-auth-header]]
    [ecommerce.cljs.components.products :refer [initialize-datagrid products selected-products]]
+   [ecommerce.cljs.components.order-products :refer [order-products-button-dialog]]
    [reagent-mui.material.grid :refer [grid]]
    [reagent-mui.material.typography :refer [typography]]
    [reagent-mui.icons.add :refer [add] :rename {add add-icon}]
@@ -148,7 +149,8 @@
 (defn products-datagrid-staff
   "Staff member version of datagrid component, allowing product addition, deletion, and updating"
   []
-  (let [addition-dialog-open? (r/atom false)
+  (let [order-dialog-open? (r/atom false)
+        addition-dialog-open? (r/atom false)
         deletion-dialog-open? (r/atom false)]
     (get-products products)
     [grid {:m 6
@@ -169,9 +171,12 @@
             :xs 4}
       [initialize-datagrid true]]
      [grid {:mt 1
+            :spacing 1
             :container true
             :item true
             :justify-content "center"}
+      [grid {:item true}
+       [order-products-button-dialog order-dialog-open? products selected-products]]
       [grid {:item true}
        [row-addition-button-dialog addition-dialog-open?]]
       [grid {:item true}
