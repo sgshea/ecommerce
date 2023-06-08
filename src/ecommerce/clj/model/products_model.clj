@@ -30,7 +30,7 @@
                                         [:description [:varchar 255]]
                                         [:category [:varchar 32] [:not nil]]
                                         [:price :float [:not nil]]
-                                        [:quantity :int [:not nil] [:check [:>= :quantity 0]]]]}))
+                                        [:quantity :int [:not nil]]]}))
       (println "Created database and added product table!")
       ;; if table creation was successful, it didn't exist before
       ;; so populate it...

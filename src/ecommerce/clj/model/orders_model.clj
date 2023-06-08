@@ -7,22 +7,22 @@
 
 (def ^:private initial-order-data
   [{:user_id 1}
-   {:user_id 1}
-   {:user_id 2}])
+   {:user_id 3}
+   {:user_id 3}])
 
 (def ^:private initial-order-details-data
   [{:order_id 1
     :product_id 1
-    :quantity 15}
+    :quantity 1}
    {:order_id 1
     :product_id 2
-    :quantity 5}
+    :quantity 1}
    {:order_id 2
     :product_id 3
-    :quantity 10}
+    :quantity 1}
    {:order_id 3
     :product_id 5
-    :quantity 50}])
+    :quantity 1}])
 
 (defn populate-orders
   "Creates tables and auto-populates them with initial data"
@@ -108,7 +108,18 @@
   "Adds a new order and corresponding order_details"
   [db params user-id]
   (let [order_id (first (vals (sql/insert! db :orders {:user_id user-id})))
-        details_vector (seq params)]
+        details_vector (seq params)
+        previous_details (sql/query db
+                                    (hsql/format {:select :*
+                                                  :from :products}))
+        previous_details_zip (zipmap (map :products/id previous_details) previous_details)]
+        
+    ;; Check that it is ok to subtract quantities (check current quantities)
+    (doseq [[product-id quantity] details_vector]
+      (let [new-quantity (- (:products/quantity (previous_details_zip product-id)) quantity)]
+        (when (neg? new-quantity)
+          (log/info "! Tried to add order and subtract more quantity than available. Throwing exception.")
+          (throw (Exception. (str "Trying to update product " product-id ", will cause negative quantity."))))))
     ;; Subtract quantities
     (doseq [[product-id quantity] details_vector]
       (sql/query db
@@ -116,9 +127,9 @@
                                :set {:quantity [:- :quantity quantity]}
                                :where [:= :id product-id]})))
     ;; Add orders
-    (sql/query db
-               (hsql/format {:insert-into [:order_details [:product_id :quantity :order_id]]
-                             :values (vec (map #(vec (conj % order_id)) details_vector))}))))
+      (sql/query db
+                 (hsql/format {:insert-into [:order_details [:product_id :quantity :order_id]]
+                               :values (vec (map #(vec (conj % order_id)) details_vector))}))))
 
 (defn delete-order-by-id
   "Deletes a order given an id

@@ -18,12 +18,15 @@
 
 (def ^:private initial-user-data
   "Create the database with this data."
-  [{:username "sammy"
-    :password (encrypt "password")
-    :email "sammy@sammyshea.com" :role_id 2}
-   {:username "john"
+  [{:username "manager"
+    :password (encrypt "manager")
+    :email "manager@email" :role_id 2}
+   {:username "staff"
     :password (encrypt "1234")
-    :email "john@smith.com" :role_id 0}])
+    :email "staff@email" :role_id 1}
+   {:username "jsmith"
+    :password (encrypt "1234")
+    :email "jsmith@email" :role_id 0}])
 
 (defn populate-users
   "Creates tables and auto-populates them with initial data"

@@ -5,7 +5,7 @@
    [ajax.core :refer [GET POST DELETE]]
    [ecommerce.cljs.auth :refer [get-auth-header]]
    [ecommerce.cljs.components.products :refer [initialize-datagrid products selected-products]]
-   [ecommerce.cljs.components.order-products :refer [order-products-button-dialog]]
+   [ecommerce.cljs.components.order-products :refer [order-products-button-dialog error-state]]
    [reagent-mui.material.grid :refer [grid]]
    [reagent-mui.material.typography :refer [typography]]
    [reagent-mui.icons.add :refer [add] :rename {add add-icon}]
@@ -170,6 +170,9 @@
      [grid {:item true
             :xs 4}
       [initialize-datagrid true]]
+     [grid {:item true}
+      [typography {:variant :body1}
+       @error-state]]
      [grid {:mt 1
             :spacing 1
             :container true

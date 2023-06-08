@@ -4,7 +4,7 @@
    [reagent.core :as r]
    [ajax.core :refer [GET PUT]]
    [ecommerce.cljs.auth :refer [get-auth-header]]
-   [ecommerce.cljs.components.order-products :refer [order-products-button-dialog]]
+   [ecommerce.cljs.components.order-products :refer [order-products-button-dialog error-state]]
    [reagent-mui.x.data-grid :refer [data-grid]]
    [reagent-mui.material.grid :refer [grid]]
    [reagent-mui.material.typography :refer [typography]]
@@ -113,6 +113,7 @@
     (get-products products)
     [grid {:mt 5
            :container true
+           :spacing 1
            :align-items "center"
            :justify-content "center"
            :direction "column"}
@@ -121,7 +122,12 @@
       [typography {:variant :h4}
        "Products List"]]
      [grid {:item true}
+      [typography {:variant :body1}
+       "Select Products to add them to order list."]]
+     [grid {:item true}
       [initialize-datagrid false]]
-     [grid {:item true
-            :mt 2}
-      [order-products-button-dialog order-dialog-open? products selected-products]]]))
+     [grid {:item true}
+      [typography {:variant :body1}
+       @error-state]]
+     [grid {:item true}
+      [order-products-button-dialog order-dialog-open? products selected-products get-products]]]))
