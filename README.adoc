@@ -1,16 +1,32 @@
-= Ecommerce Web Application in Clojure
-This repo is a web application creating a simple ecommerce management portal. A user can create, read, update, and delete products.
+= Example Ecommerce Web Application in Clojure
+
+== Functions
+- Create users, login
+- Customers can: create orders
+- Staff and Managers can: manage orders, manage product inventory
+- Managers can: manage users (delete users)
 
 == Technologies
-* https://github.com/weavejester/integrant[Integrant] to manage system state and configuration.
-* https://github.com/ring-clojure/ring[Ring] as an HTTP server abstraction
-** With ring-jetty-adapter to use the Jetty web server
-* https://github.com/metosin/reitit[Reitit], a data-driven routing library using these modules:
-** reitit-ring, reitit-middleware to manage Ring and provide common middleware
-** reitit-spec for data coercion
-** reitit-swagger, reitit-swagger-ui to provide https://swagger.io/tools/swagger-ui/[Swagger REST API documentation]
-* SQLite database
-** https://github.com/seancorfield/next-jdbc[next-jdbc] for access to databases
+Full-stack application using Clojure/ClojureScript.
+
+=== Clojure Backend
+Using Clojure on the JVM for the backend.
+
+* https://github.com/ring-clojure/ring[Ring], a HTTP server abtraction library which is abstracting the Eclipse Jetty web server.
+* https://github.com/weavejester/integrant[Integrant] manages system state and configuration.
+* https://github.com/metosin/reitit[Reitit] is a data-driven routing library which largely runs on top of Ring.
+** reitit-ring, middleware to manage ring
+** reitit-spec, data coercion
+** reitit-swagger, sets up Swagger REST API documentation
+* SQLite database using JDBC-based access with the https://github.com/seancorfield/next-jdbc[next.jdbc] wrapper.
+** https://github.com/seancorfield/honeysql[Honey SQL] used to define SQL queries as Clojure data structures.
+
+=== ClojureScript Frontend
+Using ClojureScript as the frontend.
+* Compiles to JavaScript using https://github.com/thheller/shadow-cljs[shadow-cljs].
+	- Live-reload, REPL, npm integration
+* https://reagent-project.github.io/[Reagent], the foremost React wrapper for ClojureScript.
+* MUI components library using a https://github.com/arttuka/reagent-material-ui[reagent wrapper]
 
 == Building
 === Requirements
@@ -35,3 +51,23 @@ In the repl:
 The system can be run with:
 
  $ user=> (go)
+
+=== License & Attribution
+Basic design and original setup of application from the https://github.com/prestancedesign/usermanager-reitit-example[usermanager-reitit-example github project by prestancedesign (Michael Salihi)] which itself is based on the https://github.com/seancorfield/usermanager-example[Sean Corfield's usermanager example].
+** Both distributed under Apache Source License 2.0
+
+==== License
+
+Copyright 2023 Sammy Shea
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.Copyright (c) 20
