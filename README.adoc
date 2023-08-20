@@ -20,13 +20,19 @@ Using Clojure on the JVM for the backend.
 ** reitit-swagger, sets up Swagger REST API documentation
 * SQLite database using JDBC-based access with the https://github.com/seancorfield/next-jdbc[next.jdbc] wrapper.
 ** https://github.com/seancorfield/honeysql[Honey SQL] used to define SQL queries as Clojure data structures.
+* https://funcool.github.io/buddy-auth/latest/user-guide.html[Buddy] to provide authentication.
+** buddy-auth, buddy-hashers, and buddy-sign modules to create signed Json Web Tokens (JWT) for authenticating users that are in the database.
 
 === ClojureScript Frontend
 Using ClojureScript as the frontend.
+
 * Compiles to JavaScript using https://github.com/thheller/shadow-cljs[shadow-cljs].
 	- Live-reload, REPL, npm integration
 * https://reagent-project.github.io/[Reagent], the foremost React wrapper for ClojureScript.
 * MUI components library using a https://github.com/arttuka/reagent-material-ui[reagent wrapper]
+
+== Docker
+There is also a https://github.com/sgshea/ecommerce/blob/main/Dockerfile[dockerfile] which can be used to create an image for running the application.
 
 == Building
 === Requirements
